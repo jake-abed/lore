@@ -3,6 +3,7 @@ package main
 type Command struct {
 	name        string
 	description string
+	flags       map[string]string
 	callback    func(*Config) error
 }
 
@@ -15,12 +16,16 @@ func buildCommands() map[string]Command {
 		"help": {
 			name:        "help",
 			description: "Get information about available commands.",
+			flags:       nil,
 			callback:    commandHelp,
 		},
-		"monster": {
-			name: "monster",
+		"monsters": {
+			name:        "monsters",
 			description: "Learn about a monster and potential store the data.",
-			callback: commandMonster,
+			flags: map[string]string{
+				"--cr": "Filter by Challenge Rating using an int or float from 0.25 to 20",
+			},
+			callback: commandMonsters,
 		},
 	}
 }
