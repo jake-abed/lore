@@ -1,17 +1,23 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func commandHelp(cfg *Config) error {
 	commands := buildCommands()
-	fmt.Println("The following commands are available to you: ")
+	intro := "Welcome to AuxQuest!\n"
+	introMsg := "The following commands are available to you: "
+	fmt.Println(header.Render(intro + introMsg))
+	commandDiv := ""
 	for _, command := range commands {
-		fmt.Printf("%-8s <==> %s\n", command.name, command. description)
+		commandDiv += fmt.Sprintf("%-8s <==> %s\n", command.name, command. description)
 		if command.flags != nil {
 			for k, v := range command.flags {
-				fmt.Printf("    *** %-6s - %s\n", k, v)
+				commandDiv += fmt.Sprintf("    *** %-6s - %s\n", k, v)
 			}
 		}
 	}
+	fmt.Println(commandBox.Render(commandDiv))
 	return nil
 }

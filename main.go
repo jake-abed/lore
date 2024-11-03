@@ -1,14 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"github.com/jake-abed/auxquest/internals/utils"
 )
 
 func main() {
 	args := utils.SanitizeArgs(os.Args[1:])
-	fmt.Println("Welcome to AuxQuest!")
 	cfg := &Config{
 		args: args,
 	}
