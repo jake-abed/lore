@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-func commandHelp(cfg *Config) error {
+func commandHelp(state *State) error {
 	commands := buildCommands()
 	intro := "Welcome to AuxQuest!\n"
 	introMsg := "The following commands are available to you: "

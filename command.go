@@ -1,14 +1,17 @@
 package main
 
+import "github.com/jake-abed/auxquest/internals/config"
+
 type Command struct {
 	flags       map[string]string
 	name        string
 	description string
-	callback    func(*Config) error
+	callback    func(*State) error
 }
 
-type Config struct {
+type State struct {
 	args []string
+	cfg  *config.Config
 }
 
 func buildCommands() map[string]Command {
@@ -28,7 +31,4 @@ func buildCommands() map[string]Command {
 			callback: commandMonsters,
 		},
 	}
-}
-
-func (c *Command) Execute(cfg *Config) {
 }
