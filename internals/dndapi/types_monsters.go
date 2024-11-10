@@ -1,6 +1,6 @@
 package dndapi
 
-type MonsterSearchRequest struct {
+type MonsterSearchResp struct {
 	Count   int                   `json:"count"`
 	Results []MonsterSearchResult `json:"results"`
 }

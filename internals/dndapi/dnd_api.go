@@ -5,6 +5,10 @@ import (
 	"time"
 )
 
+const (
+	baseUrl = "https://www.dnd5eapi.co/api"
+)
+
 type Client struct {
 	httpClient http.Client
 }

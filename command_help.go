@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 )
 
 func commandHelp(state *State) error {
@@ -11,13 +12,15 @@ func commandHelp(state *State) error {
 	fmt.Println(header.Render(intro + introMsg))
 	commandDiv := ""
 	for _, command := range commands {
-		commandDiv += fmt.Sprintf("%-8s <==> %s\n", command.name, command. description)
+		name := bold.Render(command.name)
+		desc := italic.Render(command.description)
+		commandDiv += fmt.Sprintf("%-8s <==> %s\n", name, desc) 
 		if command.flags != nil {
 			for k, v := range command.flags {
-				commandDiv += fmt.Sprintf("    *** %-6s - %s\n", k, v)
+				commandDiv += fmt.Sprintf("*** %-6s - %s\n", k, v)
 			}
 		}
 	}
-	fmt.Println(commandBox.Render(commandDiv))
+	fmt.Println(commandBox.Render(strings.TrimRight(commandDiv, "\n")))
 	return nil
 }
