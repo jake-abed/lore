@@ -14,7 +14,7 @@ func commandHelp(state *State) error {
 	for _, command := range commands {
 		name := bold.Render(command.name)
 		desc := italic.Render(command.description)
-		commandDiv += fmt.Sprintf("%-8s <==> %s\n", name, desc) 
+		commandDiv += fmt.Sprintf("%-12v <==> %v\n", name, desc)
 		if command.flags != nil {
 			for k, v := range command.flags {
 				commandDiv += fmt.Sprintf("*** %-6s - %s\n", k, v)
