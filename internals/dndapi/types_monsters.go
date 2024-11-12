@@ -34,7 +34,7 @@ type Monster struct {
 	ConditionImmunities   []any              `json:"condition_immunities"`
 	Senses                Senses             `json:"senses"`
 	Languages             string             `json:"languages"`
-	ChallengeRating       int                `json:"challenge_rating"`
+	ChallengeRating       float32                `json:"challenge_rating"`
 	ProficiencyBonus      int                `json:"proficiency_bonus"`
 	Xp                    int                `json:"xp"`
 	SpecialAbilities      []SpecialAbilities `json:"special_abilities"`

@@ -17,7 +17,7 @@ func commandHelp(state *State) error {
 		commandDiv += fmt.Sprintf("%-12v <==> %v\n", name, desc)
 		if command.flags != nil {
 			for k, v := range command.flags {
-				commandDiv += fmt.Sprintf("*** %-6s - %s\n", k, v)
+				commandDiv += fmt.Sprintf("  *** %-6s - %s\n", k, v)
 			}
 		}
 	}
