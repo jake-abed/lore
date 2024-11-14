@@ -1,4 +1,4 @@
-package main
+package commands 
 
 import (
 	"fmt"
@@ -6,17 +6,17 @@ import (
 )
 
 func commandHelp(state *State) error {
-	commands := buildCommands()
+	commands := BuildCommands()
 	intro := "Welcome to AuxQuest!\n"
 	introMsg := "The following commands are available to you: "
 	fmt.Println(header.Render(intro + introMsg))
 	commandDiv := ""
 	for _, command := range commands {
-		name := bold.Render(command.name)
-		desc := italic.Render(command.description)
+		name := bold.Render(command.Name)
+		desc := italic.Render(command.Description)
 		commandDiv += fmt.Sprintf("%-12v <==> %v\n", name, desc)
-		if command.flags != nil {
-			for k, v := range command.flags {
+		if command.Flags != nil {
+			for k, v := range command.Flags {
 				commandDiv += fmt.Sprintf("  *** %-6s - %s\n", k, v)
 			}
 		}

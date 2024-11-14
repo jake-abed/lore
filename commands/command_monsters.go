@@ -1,4 +1,4 @@
-package main
+package commands 
 
 import (
 	"fmt"
@@ -7,12 +7,12 @@ import (
 )
 
 func commandMonsters(state *State) error {
-	if len(state.args) == 1 {
+	if len(state.Args) == 1 {
 		monstersHelp()
 		return nil
 	}
 
-	if len(state.args) > 2 && state.args[1] == "-i" {
+	if len(state.Args) > 2 && state.Args[1] == "-i" {
 		inspectMonster(state)
 		return nil
 	}
@@ -44,14 +44,14 @@ func monstersHelp() {
 }
 
 func inspectMonster(state *State) {
-	argsCount := len(state.args)
+	argsCount := len(state.Args)
 	if argsCount < 2 || argsCount > 3 {
 		fmt.Println("Incorrect number of args to inspect monster!")
 	}
 
 	client := dndapi.NewClient(5 * time.Second)
 
-	monster, err := client.GetMonster(state.args[2])
+	monster, err := client.GetMonster(state.Args[2])
 	if err != nil {
 		fmt.Println(err)
 		return

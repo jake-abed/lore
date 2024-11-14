@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"fmt"
+	"github.com/jake-abed/auxquest/commands"
 	"github.com/jake-abed/auxquest/internals/utils"
 	"github.com/jake-abed/auxquest/internals/config"
 )
@@ -20,14 +21,14 @@ func main() {
 			fmt.Println(err)
 		}
 	}
-	state := &State{
-		args: args,
-		cfg: &cfg,
+	state := &commands.State{
+		Args: args,
+		Cfg: &cfg,
 	}
-	commands := buildCommands()
+	commands := commands.BuildCommands()
 	if len(args) == 0 {
-		commands["help"].callback(state)
+		commands["help"].Callback(state)
 	} else {
-		commands[args[0]].callback(state)
+		commands[args[0]].Callback(state)
 	}
 }
