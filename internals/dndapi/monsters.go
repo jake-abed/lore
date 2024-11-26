@@ -81,3 +81,29 @@ func monsterToId(monster string) string {
 	spacesToDashes := strings.ReplaceAll(lower, " ", "-")
 	return strings.TrimSpace(spacesToDashes)
 }
+
+
+type Attack struct {
+	Name        string
+	AttackBonus int
+	Damage      []Damage
+}
+
+func (m *Monster) ParseAttacks() []*Attack {
+	attacks := []*Attack{}
+	for _, a := range m.Actions {
+		if a.Damage == nil {
+			continue
+		}
+		newAttack := &Attack{
+			Name: a.Name,
+			AttackBonus: a.AttackBonus,
+		}
+
+		attacks = append(attacks, newAttack)
+	}
+
+	return attacks
+}
+
+

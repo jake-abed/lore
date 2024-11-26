@@ -1,8 +1,9 @@
-package commands 
+package commands
 
 import (
 	"fmt"
 	"github.com/jake-abed/auxquest/internals/dndapi"
+	"math/rand/v2"
 	"time"
 )
 
@@ -62,13 +63,13 @@ func inspectMonster(state *State) {
 		fmt.Println(err)
 		return
 	}
-	
+
 	intro := fmt.Sprintf("%s Info", monster.Name)
 	fmt.Println(header.Render(intro))
-	
+
 	fmt.Printf(" HP - %d\n", monster.HitPoints)
 	fmt.Printf(" Armor Class - %d\n", monster.ArmorClass[0].Value)
-	fmt.Printf(" Type - %s\n", monster.Type) 
+	fmt.Printf(" Type - %s\n", monster.Type)
 	fmt.Printf(" Hit Dice - %s\n", monster.HitDice)
 	fmt.Printf(" Size - %s\n", monster.Size)
 	fmt.Printf(" Alignment - %s\n", monster.Alignment)
@@ -84,7 +85,7 @@ func monsterFight(state *State) {
 	}
 
 	client := dndapi.NewClient(5 * time.Second)
-	
+
 	ch := make(chan dndapi.Monster, 2)
 
 	for _, monster_name := range state.Args[2:4] {
@@ -93,7 +94,7 @@ func monsterFight(state *State) {
 			if err != nil {
 				fmt.Println(err)
 			}
-			ch<- res
+			ch <- res
 		}()
 	}
 
@@ -102,6 +103,34 @@ func monsterFight(state *State) {
 
 	close(ch)
 
-	fmt.Println(monster1.Name)
-	fmt.Println(monster2.Name)
+	simulateFight(monster1, monster2)
 }
+
+func simulateFight(monsterOne, monsterTwo dndapi.Monster) {
+	fmt.Printf("%s will now fight %s!\n", monsterOne.Name, monsterTwo.Name)
+	hpOne := monsterOne.HitPoints
+	hpTwo := monsterTwo.HitPoints
+
+	initOne := rand.IntN(19) + (monsterOne.Dexterity-10)/2
+	initTwo := rand.IntN(19) + (monsterTwo.Dexterity-10)/2
+
+	var first *dndapi.Monster
+	var second *dndapi.Monster
+
+	if initOne >= initTwo {
+		first = &monsterOne
+		second = &monsterTwo
+	} else {
+		first = &monsterTwo
+		second = &monsterOne
+	}
+
+	firstAttacks := first.ParseAttacks()
+	secondAttacks := second.ParseAttacks()
+
+	for hpOne > 0 && hpTwo > 0 {
+		fmt.Println(&firstAttacks)
+		fmt.Println(&secondAttacks)
+		hpOne = 0
+	}
+}	
