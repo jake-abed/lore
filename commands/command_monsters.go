@@ -17,6 +17,11 @@ func commandMonsters(state *State) error {
 		return nil
 	}
 
+	if len(state.Args) > 3 && state.Args[1] == "-f" {
+		monsterFight(state)
+		return nil
+	}
+
 	client := dndapi.NewClient(5 * time.Second)
 
 	monsters, err := client.GetAllMonsters()
@@ -47,6 +52,7 @@ func inspectMonster(state *State) {
 	argsCount := len(state.Args)
 	if argsCount < 2 || argsCount > 3 {
 		fmt.Println("Incorrect number of args to inspect monster!")
+		return
 	}
 
 	client := dndapi.NewClient(5 * time.Second)
@@ -68,4 +74,34 @@ func inspectMonster(state *State) {
 	fmt.Printf(" Alignment - %s\n", monster.Alignment)
 	fmt.Printf(" XP Value - %d\n", monster.Xp)
 	return
+}
+
+func monsterFight(state *State) {
+	argsCount := len(state.Args)
+	if argsCount < 3 || argsCount < 4 {
+		fmt.Println("Incorrect number of args for a monster fight!")
+		return
+	}
+
+	client := dndapi.NewClient(5 * time.Second)
+	
+	ch := make(chan dndapi.Monster, 2)
+
+	for _, monster_name := range state.Args[2:4] {
+		go func() {
+			res, err := client.GetMonster(monster_name)
+			if err != nil {
+				fmt.Println(err)
+			}
+			ch<- res
+		}()
+	}
+
+	monster1 := <-ch
+	monster2 := <-ch
+
+	close(ch)
+
+	fmt.Println(monster1.Name)
+	fmt.Println(monster2.Name)
 }
