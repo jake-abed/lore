@@ -107,10 +107,6 @@ func monsterFight(state *State) {
 }
 
 func simulateFight(monsterOne, monsterTwo dndapi.Monster) {
-	fmt.Printf("%s will now fight %s!\n", monsterOne.Name, monsterTwo.Name)
-	hpOne := monsterOne.HitPoints
-	hpTwo := monsterTwo.HitPoints
-
 	initOne := rand.IntN(19) + (monsterOne.Dexterity-10)/2
 	initTwo := rand.IntN(19) + (monsterTwo.Dexterity-10)/2
 
@@ -125,12 +121,17 @@ func simulateFight(monsterOne, monsterTwo dndapi.Monster) {
 		second = &monsterOne
 	}
 
+	hpOne := first.HitPoints
+	hpTwo := second.HitPoints
+
+	fmt.Printf("%s will now fight %s!\n", first.Name, second.Name)
+
 	firstAttacks := first.ParseAttacks()
 	secondAttacks := second.ParseAttacks()
 
 	for hpOne > 0 && hpTwo > 0 {
-		fmt.Println(&firstAttacks)
-		fmt.Println(&secondAttacks)
-		hpOne = 0
+		fmt.Println(*dndapi.UseRandomAttack(firstAttacks)[0])
+		fmt.Println(*dndapi.UseRandomAttack(secondAttacks)[0])
+		break
 	}
 }	
