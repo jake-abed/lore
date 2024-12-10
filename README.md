@@ -5,6 +5,8 @@ looking up info and keeping notes
 
 Currently a work in progress.
 
+![Screenshot of auxquest in action](https://cdn.discordapp.com/attachments/1169489864597716993/1316158251854987374/auxquest11.png?ex=675a0764&is=6758b5e4&hm=30f1b33dfbed106a09f9249e6440d7db86df01be598fd330d98297cdc9175429&)
+
 ## Commands
 
 > **help** lists all available commands
