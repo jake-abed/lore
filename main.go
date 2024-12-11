@@ -6,6 +6,8 @@ import (
 	"github.com/jake-abed/auxquest/commands"
 	"github.com/jake-abed/auxquest/internals/utils"
 	"github.com/jake-abed/auxquest/internals/config"
+	"github.com/jake-abed/auxquest/internals/db"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
@@ -21,9 +23,17 @@ func main() {
 			fmt.Println(err)
 		}
 	}
+
+	sqliteDb, err := db.OpenDb(&cfg)
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer sqliteDb.Close()
+
 	state := &commands.State{
 		Args: args,
 		Cfg: &cfg,
+		Db: sqliteDb,
 	}
 	commands := commands.BuildCommands()
 	if len(args) == 0 {

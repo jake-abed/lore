@@ -36,6 +36,7 @@ func CreateDefaultConfig() error {
 	}
 	cfg := &Config{
 		Username: "default",
+		DbPath:   "~/.config/auxquest/sqlite.db",
 	}
 	buffer, err := json.Marshal(cfg)
 	if err != nil {
@@ -74,4 +75,5 @@ func ReadConfig() (Config, error) {
 
 type Config struct {
 	Username string `json:"username"`
+	DbPath   string `json:"dbPath"`
 }

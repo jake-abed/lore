@@ -1,6 +1,9 @@
 package commands
 
-import "github.com/jake-abed/auxquest/internals/config"
+import (
+	"database/sql"
+	"github.com/jake-abed/auxquest/internals/config"
+)
 
 type Command struct {
 	Flags       map[string]string
@@ -10,8 +13,9 @@ type Command struct {
 }
 
 type State struct {
-	Args []string
 	Cfg  *config.Config
+	Db   *sql.DB
+	Args []string
 }
 
 func BuildCommands() map[string]Command {
@@ -26,7 +30,8 @@ func BuildCommands() map[string]Command {
 			Name:        "monsters",
 			Description: "Learn about a monster and potentially store the data.",
 			Flags: map[string]string{
-				"--cr": "Filter by Challenge Rating using an int or float from 0.25 to 20",
+				"-i": "Looks up info about a particular monster by name or id slug.",
+				"-f": "Simulate a fight between two monsters. Name or id slug work.",
 			},
 			Callback: commandMonsters,
 		},
