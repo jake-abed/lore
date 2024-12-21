@@ -5,6 +5,7 @@ import (
 	"github.com/jake-abed/auxquest/internals/dndapi"
 	"math/rand/v2"
 	"time"
+	"slices"
 )
 
 func commandMonsters(state *State) error {
@@ -130,8 +131,32 @@ func simulateFight(monsterOne, monsterTwo dndapi.Monster) {
 	secondAttacks := second.ParseAttacks()
 
 	for hpOne > 0 && hpTwo > 0 {
-		fmt.Println(*dndapi.UseRandomAttack(firstAttacks)[0])
-		fmt.Println(*dndapi.UseRandomAttack(secondAttacks)[0])
-		break
+		firstAttack := *dndapi.UseRandomAttack(firstAttacks)[0]
+		secondAttack := *dndapi.UseRandomAttack(secondAttacks)[0]
+		firstDamage := firstAttack.Damage
+		if slices.Contains(second.DamageResistances, firstAttack.Type) {
+			firstDamage /= 2
+		}
+		if slices.Contains(second.DamageVulnerabilities, firstAttack.Type) {
+			firstDamage *= 2
+		}
+		if slices.Contains(second.DamageImmunities, firstAttack.Type) {
+			firstDamage = 0
+		}
+		hpTwo -= firstDamage
+		secondDamage := secondAttack.Damage
+		if slices.Contains(first.DamageResistances, secondAttack.Type) {
+			firstDamage /= 2
+		}
+		if slices.Contains(first.DamageVulnerabilities, secondAttack.Type) {
+			firstDamage *= 2
+		}
+		if slices.Contains(first.DamageImmunities, secondAttack.Type) {
+			firstDamage = 0
+		}
+		hpOne -= secondDamage
+
+		fmt.Printf("%s HP Remaining: %d, %s HP Remaining: %d\n",
+			first.Name, hpOne, second.Name, hpTwo)
 	}
-}	
+}

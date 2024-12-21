@@ -28,19 +28,17 @@ type Monster struct {
 	Wisdom                int                `json:"wisdom"`
 	Charisma              int                `json:"charisma"`
 	Proficiencies         []Proficiencies    `json:"proficiencies"`
-	DamageVulnerabilities []any              `json:"damage_vulnerabilities"`
-	DamageResistances     []any              `json:"damage_resistances"`
+	DamageVulnerabilities []string           `json:"damage_vulnerabilities"`
+	DamageResistances     []string           `json:"damage_resistances"`
 	DamageImmunities      []string           `json:"damage_immunities"`
-	ConditionImmunities   []any              `json:"condition_immunities"`
 	Senses                Senses             `json:"senses"`
 	Languages             string             `json:"languages"`
-	ChallengeRating       float32                `json:"challenge_rating"`
+	ChallengeRating       float32            `json:"challenge_rating"`
 	ProficiencyBonus      int                `json:"proficiency_bonus"`
 	Xp                    int                `json:"xp"`
 	SpecialAbilities      []SpecialAbilities `json:"special_abilities"`
 	Actions               []Actions          `json:"actions"`
 	LegendaryActions      []LegendaryActions `json:"legendary_actions"`
-	Image                 string             `json:"image"`
 	URL                   string             `json:"url"`
 }
 

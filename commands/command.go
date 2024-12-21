@@ -35,5 +35,15 @@ func BuildCommands() map[string]Command {
 			},
 			Callback: commandMonsters,
 		},
+		"npcs": {
+			Name:        "npcs",
+			Description: "Add, search, edit, and view info about NPCs.",
+			Flags: map[string]string{
+				"-i": "Inspect an NPC and view their info.",
+				"-a": "Add an NPC to your local database for your campaign.",
+				"-e": "Edit an NPC's info. [Not implemented yet.]",
+				"-s": "Search your NPCs by name. Returns all possible matches.",
+			},
+		},
 	}
 }

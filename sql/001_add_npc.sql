@@ -1,6 +1,6 @@
 -- +goose Up
 CREATE TABLE npcs (
-  id INTEGER PRIMARY KEY UNIQUE,
+  id INTEGER UNIQUE PRIMARY KEY,
   name TEXT,
   race TEXT,
 	class TEXT,

@@ -36,7 +36,7 @@ func CreateDefaultConfig() error {
 	}
 	cfg := &Config{
 		Username: "default",
-		DbPath:   "~/.config/auxquest/sqlite.db",
+		DbPath:   "/.config/auxquest/sqlite.db",
 	}
 	buffer, err := json.Marshal(cfg)
 	if err != nil {

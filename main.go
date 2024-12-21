@@ -1,13 +1,13 @@
 package main
 
 import (
-	"os"
 	"fmt"
 	"github.com/jake-abed/auxquest/commands"
-	"github.com/jake-abed/auxquest/internals/utils"
 	"github.com/jake-abed/auxquest/internals/config"
 	"github.com/jake-abed/auxquest/internals/db"
+	"github.com/jake-abed/auxquest/internals/utils"
 	_ "github.com/mattn/go-sqlite3"
+	"os"
 )
 
 func main() {
@@ -32,9 +32,10 @@ func main() {
 
 	state := &commands.State{
 		Args: args,
-		Cfg: &cfg,
-		Db: sqliteDb,
+		Cfg:  &cfg,
+		Db:   sqliteDb,
 	}
+
 	commands := commands.BuildCommands()
 	if len(args) == 0 {
 		commands["help"].Callback(state)

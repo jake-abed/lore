@@ -1,4 +1,4 @@
-package commands 
+package commands
 
 import (
 	"github.com/charmbracelet/lipgloss"
@@ -19,7 +19,6 @@ var (
 		Bold(true).
 		Foreground(white).
 		Background(red).
-		Width(60).
 		Margin(0).
 		Padding(1, 2).
 		BorderStyle(lipgloss.RoundedBorder()).
@@ -28,6 +27,5 @@ var (
 	commandBox = lipgloss.NewStyle().
 			BorderStyle(lipgloss.RoundedBorder()).
 			BorderForeground(red).
-			Width(60).
 			Padding(1, 2)
 )
