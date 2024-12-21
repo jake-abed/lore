@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/jake-abed/auxquest/internals/dndapi"
 	"math/rand/v2"
-	"time"
 	"slices"
+	"time"
 )
 
 func commandMonsters(state *State) error {

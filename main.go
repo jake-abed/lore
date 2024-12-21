@@ -6,7 +6,7 @@ import (
 	"github.com/jake-abed/auxquest/internals/config"
 	"github.com/jake-abed/auxquest/internals/db"
 	"github.com/jake-abed/auxquest/internals/utils"
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite"
 	"os"
 )
 
@@ -40,6 +40,12 @@ func main() {
 	if len(args) == 0 {
 		commands["help"].Callback(state)
 	} else {
-		commands[args[0]].Callback(state)
+		command, ok := commands[args[0]]
+		if !ok {
+			fmt.Printf("AuxQuest has no %s command!\n", args[0])
+			commands["help"].Callback(state)
+		} else {
+			command.Callback(state)
+		}
 	}
 }

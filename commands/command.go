@@ -44,6 +44,7 @@ func BuildCommands() map[string]Command {
 				"-e": "Edit an NPC's info. [Not implemented yet.]",
 				"-s": "Search your NPCs by name. Returns all possible matches.",
 			},
+			Callback: commandNpcs,
 		},
 	}
 }
