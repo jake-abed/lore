@@ -54,7 +54,10 @@ func (c *Client) GetMonster(monster string) (Monster, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode == 404 {
-		err = fmt.Errorf("%s not found. Please check for mistakes", monster)
+		err = fmt.Errorf(
+			"%s not found. Some monsters are not featured in the API. Check for typos.",
+			monster,
+		)
 		return Monster{}, err
 	}
 

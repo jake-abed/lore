@@ -104,6 +104,10 @@ func monsterFight(state *State) {
 
 	close(ch)
 
+	if monster1.Name == "" || monster2.Name == "" {
+		return
+	}
+
 	simulateFight(monster1, monster2)
 }
 

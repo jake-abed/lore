@@ -27,7 +27,7 @@ func commandNpcs(s *State) error {
 		os.Exit(0)
 	}
 
-	if len(npcArgs) == 2 && (flag == "-v" || flag == "-view") {
+	if len(npcArgs) == 2 && (flag == "-v" || flag == "--view") {
 		name := npcArgs[1]
 		npc, err := s.Db.ViewNpcByName(context.Background(), name)
 		if err != nil {
@@ -35,6 +35,16 @@ func commandNpcs(s *State) error {
 			return err
 		}
 		viewNpc(npc)
+	}
+
+	if len(npcArgs) == 2 && (flag == "-e" || flag == "--edit") {
+		name := npcArgs[1]
+		npc, err := s.Db.ViewNpcByName(context.Background(), name)
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+		editNpc(npc, s)
 	}
 	return nil
 }
@@ -137,7 +147,7 @@ func addNpc(s *State) error {
 					return nil
 				}),
 		),
-	).WithTheme(huh.ThemeDracula())
+	).WithTheme(huh.ThemeBase16())
 
 	err := npcForm.Run()
 	if err != nil {
@@ -165,10 +175,10 @@ func addNpc(s *State) error {
 		fmt.Println(err)
 		return err
 	}
-	fmt.Println(added)
+
+	fmt.Printf("Success! %s created.\n", added.Name)
 
 	return nil
-
 }
 
 func viewNpc(npc *db.Npc) {
@@ -184,4 +194,99 @@ func viewNpc(npc *db.Npc) {
 	fmt.Printf(" Description : %s\n", npc.Description)
 	fmt.Printf(" Level: %d\n", npc.Level)
 	fmt.Printf(" Hitpoints: %d\n", npc.Hitpoints)
+}
+
+func editNpc(npc *db.Npc, s *State) error {
+	name := npc.Name
+	race := npc.Race
+	class := npc.Class
+	subclass := npc.Subclass
+	alignment := npc.Alignment
+	sex := npc.Sex
+	desc := npc.Description
+	languages := npc.Languages
+	level := strconv.FormatInt(int64(npc.Level), 10)
+	hitpoints := strconv.FormatInt(int64(npc.Hitpoints), 10)
+
+	npcForm := huh.NewForm(
+		huh.NewGroup(
+			huh.NewInput().
+				Title("Name").
+				Value(&name).
+				Validate(func(s string) error {
+					if s == "" {
+						return fmt.Errorf("You have to enter a name!")
+					}
+					return nil
+				}),
+
+			huh.NewInput().
+				Title("Race").
+				Value(&race),
+
+			huh.NewInput().
+				Title("Class").
+				Value(&class),
+
+			huh.NewInput().
+				Title("Subclass").
+				Value(&subclass),
+
+			huh.NewInput().
+				Title("Alignment").
+				Value(&alignment),
+
+			huh.NewSelect[string]().
+				Title("Sex").
+				Options(
+					huh.NewOption("Male", "male"),
+					huh.NewOption("Female", "female"),
+					huh.NewOption("Intersex", "intersex"),
+					huh.NewOption("?", "?"),
+					huh.NewOption("Other", "other"),
+				).
+				Value(&sex),
+
+			huh.NewInput().
+				Title("List known languages:").
+				Value(&languages),
+		),
+
+		huh.NewGroup(
+			huh.NewText().
+				Title("Describe your NPC").
+				Value(&desc),
+		),
+
+		huh.NewGroup(
+			huh.NewInput().
+				Title("Level").
+				Value(&level).
+				Validate(func(s string) error {
+					_, err := strconv.ParseInt(s, 10, 64)
+					if err != nil {
+						return fmt.Errorf("%s is not a number!", s)
+					}
+					return nil
+				}),
+
+			huh.NewInput().
+				Title("Hitpoints").
+				Value(&hitpoints).
+				Validate(func(s string) error {
+					_, err := strconv.ParseInt(s, 10, 64)
+					if err != nil {
+						return fmt.Errorf("%s is not a number!", s)
+					}
+					return nil
+				}),
+		),
+	).WithTheme(huh.ThemeBase())
+
+	err := npcForm.Run()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

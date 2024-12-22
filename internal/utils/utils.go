@@ -4,8 +4,7 @@ import "strings"
 
 func SanitizeArgs(args []string) []string {
 	for i, arg := range args {
-		lower := strings.ToLower(arg)
-		trimmed := strings.TrimSpace(lower)
+		trimmed := strings.TrimSpace(arg)
 		args[i] = trimmed
 	}
 	return args
