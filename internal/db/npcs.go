@@ -93,6 +93,62 @@ func (q *Queries) AddNpc(ctx context.Context, params *NpcParams) (*Npc, error) {
 	return &npc, nil
 }
 
+const editNpcByIdQuery = `UPDATE npcs
+SET name = $1,
+		race = $2, 
+		class = $3, 
+		subclass = $4, 
+		alignment = $5,
+		level = $6,
+		hitpoints = $7,
+		sex = $8,
+		description = $9,
+		languages = $10
+WHERE id = $11
+RETURNING *`
+
+func (q *Queries) EditNpcById(
+	ctx context.Context,
+	npc *Npc,
+) (*Npc, error) {
+	row := q.Db.QueryRowContext(
+		ctx,
+		editNpcByIdQuery,
+		npc.Name,
+		npc.Race,
+		npc.Class,
+		npc.Subclass,
+		npc.Alignment,
+		npc.Level,
+		npc.Hitpoints,
+		npc.Sex,
+		npc.Description,
+		npc.Languages,
+		npc.Id,
+	)
+
+	updated := Npc{}
+	err := row.Scan(
+		&updated.Id,
+		&updated.Name,
+		&updated.Race,
+		&updated.Class,
+		&updated.Subclass,
+		&updated.Alignment,
+		&updated.Level,
+		&updated.Hitpoints,
+		&updated.Sex,
+		&updated.Description,
+		&updated.Languages,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &updated, nil
+
+}
+
 const viewNpcQueryByName = `SELECT * FROM npcs WHERE name LIKE $1`
 
 func (q *Queries) ViewNpcByName(

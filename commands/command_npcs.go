@@ -178,6 +178,8 @@ func addNpc(s *State) error {
 
 	fmt.Printf("Success! %s created.\n", added.Name)
 
+	viewNpc(added)
+
 	return nil
 }
 
@@ -287,6 +289,30 @@ func editNpc(npc *db.Npc, s *State) error {
 	if err != nil {
 		return err
 	}
+
+	parsedLevel, _ := strconv.ParseInt(level, 10, 64)
+	parsedHP, _ := strconv.ParseInt(hitpoints, 10, 64)
+
+	updatedNpc := db.Npc{
+		Id:          npc.Id,
+		Name:        name,
+		Race:        race,
+		Class:       class,
+		Subclass:    subclass,
+		Alignment:   alignment,
+		Sex:         sex,
+		Description: desc,
+		Languages:   languages,
+		Level:       int(parsedLevel),
+		Hitpoints:   int(parsedHP),
+	}
+
+	res, err := s.Db.EditNpcById(context.Background(), &updatedNpc)
+	if err != nil {
+		return err
+	}
+
+	viewNpc(res)
 
 	return nil
 }
