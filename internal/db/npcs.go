@@ -58,15 +58,65 @@ const createNpcQuery = `INSERT INTO npcs (
 
 func (q *Queries) AddNpc(ctx context.Context, params *NpcParams) (*Npc, error) {
 	npc := Npc{}
-	row := q.Db.QueryRowContext(ctx, createNpcQuery, params.Name, params.Race,
-		params.Class, params.Subclass, params.Alignment, params.Sex,
-		params.Description, params.Languages, params.Level, params.Hitpoints)
-	err := row.Scan(&npc.Id, &npc.Name, &npc.Race, &npc.Class, &npc.Subclass,
-		&npc.Alignment, &npc.Level, &npc.Hitpoints, &npc.Sex, &npc.Description,
-		&npc.Languages)
+	row := q.Db.QueryRowContext(
+		ctx,
+		createNpcQuery,
+		params.Name,
+		params.Race,
+		params.Class,
+		params.Subclass,
+		params.Alignment,
+		params.Sex,
+		params.Description,
+		params.Languages,
+		params.Level,
+		params.Hitpoints,
+	)
+	err := row.Scan(
+		&npc.Id,
+		&npc.Name,
+		&npc.Race,
+		&npc.Class,
+		&npc.Subclass,
+		&npc.Alignment,
+		&npc.Level,
+		&npc.Hitpoints,
+		&npc.Sex,
+		&npc.Description,
+		&npc.Languages,
+	)
+
 	if err != nil {
 		fmt.Println(err)
 		return &Npc{}, err
+	}
+	return &npc, nil
+}
+
+const viewNpcQueryByName = `SELECT * FROM npcs WHERE name LIKE $1`
+
+func (q *Queries) ViewNpcByName(
+	ctx context.Context,
+	name string,
+) (*Npc, error) {
+	npc := Npc{}
+	row := q.Db.QueryRowContext(ctx, viewNpcQueryByName, name)
+	err := row.Scan(
+		&npc.Id,
+		&npc.Name,
+		&npc.Race,
+		&npc.Class,
+		&npc.Subclass,
+		&npc.Alignment,
+		&npc.Level,
+		&npc.Hitpoints,
+		&npc.Sex,
+		&npc.Description,
+		&npc.Languages,
+	)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
 	}
 	return &npc, nil
 }

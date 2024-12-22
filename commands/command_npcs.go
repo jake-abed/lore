@@ -11,12 +11,14 @@ import (
 
 func commandNpcs(s *State) error {
 	npcArgs := s.Args[1:]
-	if len(npcArgs) == 0 {
+	if len(npcArgs) < 1 {
 		fmt.Println("Npcs command expects at least one argument!")
 		os.Exit(0)
 	}
 
-	if len(npcArgs) == 1 && npcArgs[0] == "-a" {
+	flag := npcArgs[0]
+
+	if len(npcArgs) == 1 && (flag == "-a" || flag == "-add") {
 		err := addNpc(s)
 		if err != nil {
 			fmt.Println(err)
@@ -25,27 +27,15 @@ func commandNpcs(s *State) error {
 		os.Exit(0)
 	}
 
-	testNpc := &db.NpcParams{
-		Name:        "Tony Da Deer",
-		Race:        "Deer",
-		Class:       "Friend",
-		Subclass:    "",
-		Alignment:   "Chaotic Good",
-		Level:       69,
-		Hitpoints:   420,
-		Sex:         "Yes",
-		Description: "A godly and lovely Deer with a heart of gold.",
-		Languages:   "Deer, English, & Tagalog",
+	if len(npcArgs) == 2 && (flag == "-v" || flag == "-view") {
+		name := npcArgs[1]
+		npc, err := s.Db.ViewNpcByName(context.Background(), name)
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+		viewNpc(npc)
 	}
-
-	npc, err := s.Db.AddNpc(context.Background(), testNpc)
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
-
-	fmt.Println(npc)
-
 	return nil
 }
 
@@ -147,7 +137,7 @@ func addNpc(s *State) error {
 					return nil
 				}),
 		),
-	)
+	).WithTheme(huh.ThemeDracula())
 
 	err := npcForm.Run()
 	if err != nil {
@@ -179,4 +169,19 @@ func addNpc(s *State) error {
 
 	return nil
 
+}
+
+func viewNpc(npc *db.Npc) {
+	intro := fmt.Sprintf("Info About NPC:\n")
+	introTip := fmt.Sprintf("%s // Id: %d", npc.Name, npc.Id)
+	fmt.Println(header.Render(intro + introTip))
+	fmt.Printf(" Name: %s\n", npc.Name)
+	fmt.Printf(" Race: %s\n", npc.Race)
+	fmt.Printf(" Class: %s\n", npc.Class)
+	fmt.Printf(" Subclass: %s\n", npc.Subclass)
+	fmt.Printf(" Alignment: %s\n", npc.Alignment)
+	fmt.Printf(" Sex: %s\n", npc.Sex)
+	fmt.Printf(" Description : %s\n", npc.Description)
+	fmt.Printf(" Level: %d\n", npc.Level)
+	fmt.Printf(" Hitpoints: %d\n", npc.Hitpoints)
 }
