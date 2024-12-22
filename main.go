@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	"github.com/jake-abed/auxquest/commands"
-	"github.com/jake-abed/auxquest/internals/config"
-	"github.com/jake-abed/auxquest/internals/db"
-	"github.com/jake-abed/auxquest/internals/utils"
+	"github.com/jake-abed/auxquest/internal/config"
+	"github.com/jake-abed/auxquest/internal/db"
+	"github.com/jake-abed/auxquest/internal/utils"
 	_ "modernc.org/sqlite"
 	"os"
 )
@@ -30,10 +30,12 @@ func main() {
 	}
 	defer sqliteDb.Close()
 
+	queries := db.New(sqliteDb)
+
 	state := &commands.State{
 		Args: args,
 		Cfg:  &cfg,
-		Db:   sqliteDb,
+		Db:   queries,
 	}
 
 	commands := commands.BuildCommands()

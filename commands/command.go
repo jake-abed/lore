@@ -1,8 +1,8 @@
 package commands
 
 import (
-	"database/sql"
-	"github.com/jake-abed/auxquest/internals/config"
+	"github.com/jake-abed/auxquest/internal/config"
+	"github.com/jake-abed/auxquest/internal/db"
 )
 
 type Command struct {
@@ -14,7 +14,7 @@ type Command struct {
 
 type State struct {
 	Cfg  *config.Config
-	Db   *sql.DB
+	Db   *db.Queries
 	Args []string
 }
 

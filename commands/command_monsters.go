@@ -2,7 +2,7 @@ package commands
 
 import (
 	"fmt"
-	"github.com/jake-abed/auxquest/internals/dndapi"
+	"github.com/jake-abed/auxquest/internal/dndapi"
 	"math/rand/v2"
 	"slices"
 	"time"

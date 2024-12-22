@@ -1,13 +1,29 @@
 package db
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
-	"github.com/jake-abed/auxquest/internals/config"
+	"github.com/jake-abed/auxquest/internal/config"
 	"github.com/pressly/goose/v3"
 	_ "modernc.org/sqlite"
 	"os"
 )
+
+type DBTX interface {
+	ExecContext(context.Context, string, ...interface{}) (sql.Result, error)
+	PrepareContext(context.Context, string) (*sql.Stmt, error)
+	QueryContext(context.Context, string, ...interface{}) (*sql.Rows, error)
+	QueryRowContext(context.Context, string, ...interface{}) *sql.Row
+}
+
+type Queries struct {
+	Db DBTX
+}
+
+func New(db DBTX) *Queries {
+	return &Queries{Db: db}
+}
 
 const DEFAULT_PATH = "/.config/auxquest/sqlite.db"
 
