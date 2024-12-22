@@ -3,9 +3,9 @@ package commands
 import (
 	"context"
 	"fmt"
+	"github.com/charmbracelet/huh"
 	"github.com/jake-abed/auxquest/internal/db"
 	"os"
-	"github.com/charmbracelet/huh"
 	"strconv"
 )
 
@@ -116,7 +116,7 @@ func addNpc(s *State) error {
 			huh.NewInput().
 				Title("List known languages:").
 				Value(&languages),
-			),
+		),
 
 		huh.NewGroup(
 			huh.NewText().
@@ -156,18 +156,18 @@ func addNpc(s *State) error {
 
 	parsedLevel, _ := strconv.ParseInt(level, 10, 64)
 	parsedHP, _ := strconv.ParseInt(hitpoints, 10, 64)
-		
+
 	npc := &db.NpcParams{
-		Name: name,
-		Race: race,
-		Class: class,
-		Subclass: subclass,
-		Alignment: alignment,
-		Sex: sex,
+		Name:        name,
+		Race:        race,
+		Class:       class,
+		Subclass:    subclass,
+		Alignment:   alignment,
+		Sex:         sex,
 		Description: desc,
-		Languages: languages,
-		Level: int(parsedLevel),
-		Hitpoints: int(parsedHP),
+		Languages:   languages,
+		Level:       int(parsedLevel),
+		Hitpoints:   int(parsedHP),
 	}
 
 	added, err := s.Db.AddNpc(context.Background(), npc)
@@ -178,5 +178,5 @@ func addNpc(s *State) error {
 	fmt.Println(added)
 
 	return nil
-			
+
 }
