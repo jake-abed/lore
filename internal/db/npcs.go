@@ -176,3 +176,39 @@ func (q *Queries) ViewNpcByName(
 	}
 	return &npc, nil
 }
+
+const searchNpcsByNameQuery = `SELECT * FROM npcs WHERE name LIKE $1`
+
+func (q *Queries) SearchNpcsByName(
+	ctx context.Context,
+	name string,
+) ([]*Npc, error) {
+	rows, err := q.Db.QueryContext(ctx, searchNpcsByNameQuery, name)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var npcs []*Npc
+	for rows.Next() {
+		var new Npc
+		err := rows.Scan(
+			&new.Id,
+			&new.Name,
+			&new.Race,
+			&new.Class,
+			&new.Subclass,
+			&new.Alignment,
+			&new.Level,
+			&new.Hitpoints,
+			&new.Sex,
+			&new.Description,
+			&new.Languages,
+		)
+		if err != nil {
+			return nil, err
+		}
+		npcs = append(npcs, &new)
+	}
+	return npcs, nil
+}

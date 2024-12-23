@@ -46,6 +46,21 @@ func commandNpcs(s *State) error {
 		}
 		editNpc(npc, s)
 	}
+
+	if len(npcArgs) == 2 && (flag == "-s" || flag == "--search") {
+		name := "%" + npcArgs[1] + "%"
+		npcs, err := s.Db.SearchNpcsByName(
+			context.Background(),
+			name,
+		)
+		if err != nil {
+			return err
+		}
+		for _, npc := range npcs {
+			fmt.Printf("*** Name: %s | Id: %d | Race: %s | Class: %s\n",
+				npc.Name, npc.Id, npc.Race, npc.Class)
+		}
+	}
 	return nil
 }
 
