@@ -145,34 +145,43 @@ unavoidable? Part of the ugliness comes from having to handle all the int64
 to int conversions.
 */
 
-func rollDamage(attackDie string) int {
+func parseDamageDice(attackDie string) (
+	numDice int64,
+	damageDice int64,
+	bonus int64,
+) {
 	splitAtD := strings.Split(attackDie, "d")
 	numDice, err := strconv.ParseInt(splitAtD[0], 10, 32)
 	if err != nil {
-		panic("Damage Dice incorrect!")
+		fmt.Println(err)
+		return 0, 0, 0
 	}
 	dieSizeStr := splitAtD[1]
-	var dieSize int64
-	var bonus int64
 	if strings.Contains(dieSizeStr, "+") {
 		splitAtPlus := strings.Split(dieSizeStr, "+")
-		dieSize, err = strconv.ParseInt(splitAtPlus[0], 10, 32)
+		damageDice, err = strconv.ParseInt(splitAtPlus[0], 10, 32)
 		if err != nil {
-			panic("Damage Dice incorrect!")
+			fmt.Println(err)
+			return
 		}
 		bonus, err = strconv.ParseInt(splitAtPlus[1], 10, 32)
 		if err != nil {
-			panic("Damage Dice incorrect!")
+			fmt.Println(err)
+			return
 		}
 	} else {
-		dieSize, err = strconv.ParseInt(splitAtD[1], 10, 32)
+		damageDice, err = strconv.ParseInt(splitAtD[1], 10, 32)
 		if err != nil {
-			panic("Damage Dice incorrect!")
+			fmt.Println(err)
+			return
 		}
 	}
+	return
+}
 
+func rollDamage(attackDie string) int {
+	numDice, dieSize, bonus := parseDamageDice(attackDie)
 	var damageSum int64
-
 	for numDice > 0 {
 		damageSum += int64(rand.IntN(int(dieSize)-1) + 1)
 		numDice -= 1

@@ -12,7 +12,7 @@ import (
 func commandNpcs(s *State) error {
 	npcArgs := s.Args[1:]
 	if len(npcArgs) < 1 {
-		fmt.Println("Npcs command expects at least one argument!")
+		npcHelp()
 		os.Exit(0)
 	}
 
@@ -56,6 +56,11 @@ func commandNpcs(s *State) error {
 		if err != nil {
 			return err
 		}
+		if len(npcs) == 0 {
+			fmt.Println("Hmmm... we couldn't find any NPCs with a similar name.")
+			return nil
+		}
+		fmt.Printf("AuxQuest found %d matching NPCs:\n", len(npcs))
 		for _, npc := range npcs {
 			fmt.Printf("*** Name: %s | Id: %d | Race: %s | Class: %s\n",
 				npc.Name, npc.Id, npc.Race, npc.Class)
@@ -66,15 +71,20 @@ func commandNpcs(s *State) error {
 
 func npcHelp() {
 	intro := "AuxQuest Npc Help\n"
-	introTip := "Monsters subcommands information"
+	introTip := "NPCs subcommand information"
 	fmt.Println(header.Render(intro + introTip))
-	add := bold.Render("  *** npc -a <npc-name> | ")
+	add := bold.Render("  *** npc -a | ")
 	addMessage := "Add a new npc by name."
 	fmt.Println(add + addMessage)
-	fight := bold.Render("  *** monsters -f <monster-1> <monster-2> | ")
-	fightMessage := "Simulate a fight between monsters.\n"
-	fmt.Println(fight + fightMessage)
-
+	edit := bold.Render("  *** npc -e <npc-name> | ")
+	editMessage := "Edit an NPC by name."
+	fmt.Println(edit + editMessage)
+	search := bold.Render("  *** npc -s <npc-name> | ")
+	searchMessage := "Searches the DB by NPC name returning all results."
+	fmt.Println(search + searchMessage)
+	view := bold.Render("  *** npc -s <npc-name> | ")
+	viewMessage := "View an NPC by name (case-insensitive).\n"
+	fmt.Println(view + viewMessage)
 }
 
 func addNpc(s *State) error {

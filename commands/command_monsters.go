@@ -138,29 +138,56 @@ func simulateFight(monsterOne, monsterTwo dndapi.Monster) {
 		firstAttack := *dndapi.UseRandomAttack(firstAttacks)[0]
 		secondAttack := *dndapi.UseRandomAttack(secondAttacks)[0]
 		firstDamage := firstAttack.Damage
-		if slices.Contains(second.DamageResistances, firstAttack.Type) {
-			firstDamage /= 2
-		}
-		if slices.Contains(second.DamageVulnerabilities, firstAttack.Type) {
-			firstDamage *= 2
-		}
-		if slices.Contains(second.DamageImmunities, firstAttack.Type) {
-			firstDamage = 0
-		}
+		firstMessage := parseDamage(
+			&firstDamage,
+			firstAttack.Name,
+			firstAttack,
+			first,
+			second,
+		)
 		hpTwo -= firstDamage
+		fmt.Println(firstMessage)
+		time.Sleep(time.Millisecond * 800)
+
 		secondDamage := secondAttack.Damage
-		if slices.Contains(first.DamageResistances, secondAttack.Type) {
-			firstDamage /= 2
-		}
-		if slices.Contains(first.DamageVulnerabilities, secondAttack.Type) {
-			firstDamage *= 2
-		}
-		if slices.Contains(first.DamageImmunities, secondAttack.Type) {
-			firstDamage = 0
-		}
+		secondMessage := parseDamage(
+			&secondDamage,
+			secondAttack.Name,
+			secondAttack,
+			second,
+			first,
+		)
 		hpOne -= secondDamage
+		fmt.Println(secondMessage)
+		time.Sleep(time.Millisecond * 800)
 
 		fmt.Printf("%s HP Remaining: %d, %s HP Remaining: %d\n",
 			first.Name, hpOne, second.Name, hpTwo)
+		time.Sleep(time.Millisecond * 1000)
 	}
+}
+
+func parseDamage(
+	damageVal *int,
+	attackName string,
+	damage dndapi.AttackDamage,
+	attacker *dndapi.Monster,
+	target *dndapi.Monster,
+) (damageMessage string) {
+	damageMessage = fmt.Sprintf("%s uses %s. ", attacker.Name, attackName)
+	if slices.Contains(target.DamageResistances, damage.Type) {
+		*damageVal /= 2
+		damageMessage += fmt.Sprintf("%s is resistant to %s. ", target.Name,
+			damage.Type)
+	}
+	if slices.Contains(target.DamageVulnerabilities, damage.Type) {
+		*damageVal *= 2
+		damageMessage += fmt.Sprintf("%s is weak to %s. ", target.Name, damage.Type)
+	}
+	if slices.Contains(target.DamageImmunities, damage.Type) {
+		*damageVal = 0
+		damageMessage += fmt.Sprintf("%s is immune to %s. ", target.Name,
+			damage.Type)
+	}
+	return
 }
