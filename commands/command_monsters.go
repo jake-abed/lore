@@ -5,6 +5,7 @@ import (
 	"github.com/jake-abed/auxquest/internal/dndapi"
 	"math/rand/v2"
 	"slices"
+	"strings"
 	"time"
 )
 
@@ -175,16 +176,16 @@ func parseDamage(
 	target *dndapi.Monster,
 ) (damageMessage string) {
 	damageMessage = fmt.Sprintf("%s uses %s. ", attacker.Name, attackName)
-	if slices.Contains(target.DamageResistances, damage.Type) {
+	if slices.Contains(target.DamageResistances, strings.ToLower(damage.Type)) {
 		*damageVal /= 2
 		damageMessage += fmt.Sprintf("%s is resistant to %s. ", target.Name,
 			damage.Type)
 	}
-	if slices.Contains(target.DamageVulnerabilities, damage.Type) {
+	if slices.Contains(target.DamageVulnerabilities, strings.ToLower(damage.Type)) {
 		*damageVal *= 2
 		damageMessage += fmt.Sprintf("%s is weak to %s. ", target.Name, damage.Type)
 	}
-	if slices.Contains(target.DamageImmunities, damage.Type) {
+	if slices.Contains(target.DamageImmunities, strings.ToLower(damage.Type)) {
 		*damageVal = 0
 		damageMessage += fmt.Sprintf("%s is immune to %s. ", target.Name,
 			damage.Type)
