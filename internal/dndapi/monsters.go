@@ -101,6 +101,7 @@ type AttackDamage struct {
 	Name   string
 	Type   string
 	Damage int
+	AttackBonus int
 }
 
 func (m *Monster) ParseAttacks() []*Attack {
@@ -121,7 +122,10 @@ func (m *Monster) ParseAttacks() []*Attack {
 	return attacks
 }
 
-func UseRandomAttack(attacks []*Attack) []*AttackDamage {
+func UseRandomAttack(attacks []*Attack) *AttackDamage {
+	if len(attacks) == 0 {
+		return nil
+	}
 	attackIndex := rand.IntN(len(attacks)) - 1
 	if attackIndex < 0 {
 		attackIndex = 0
@@ -133,10 +137,11 @@ func UseRandomAttack(attacks []*Attack) []*AttackDamage {
 			Name:   attack.Name,
 			Type:   damage.DamageType.Name,
 			Damage: rollDamage(damage.DamageDice),
+			AttackBonus: attack.AttackBonus,
 		}
 		damages = append(damages, attackDamage)
 	}
-	return damages
+	return damages[0]
 }
 
 /*

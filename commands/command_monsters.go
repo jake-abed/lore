@@ -136,30 +136,49 @@ func simulateFight(monsterOne, monsterTwo dndapi.Monster) {
 	secondAttacks := second.ParseAttacks()
 
 	for hpOne > 0 && hpTwo > 0 {
-		firstAttack := *dndapi.UseRandomAttack(firstAttacks)[0]
-		secondAttack := *dndapi.UseRandomAttack(secondAttacks)[0]
+		firstAttack := dndapi.UseRandomAttack(firstAttacks)
+		secondAttack := dndapi.UseRandomAttack(secondAttacks)
+		if firstAttack == nil || secondAttack == nil {
+			fmt.Println("One of these monsters does not have valid attacks.")
+			fmt.Println("This fight cannot be simulated.")
+			return
+		}
 		firstDamage := firstAttack.Damage
-		firstMessage := parseDamage(
-			&firstDamage,
-			firstAttack.Name,
-			firstAttack,
-			first,
-			second,
-		)
+		firstRoll := firstAttack.AttackBonus + rand.IntN(19) + 1
+		var firstMessage string
+		if firstRoll < second.ArmorClass[0].Value {
+			fmt.Printf("%s tried to use %s, but it missed!\n",
+				first.Name, firstAttack.Name)
+		} else {
+			firstMessage = parseDamage(
+				&firstDamage,
+				firstAttack.Name,
+				*firstAttack,
+				first,
+				second,
+			)
+		}
 		hpTwo -= firstDamage
-		fmt.Println(firstMessage)
+		fmt.Print(firstMessage)
 		time.Sleep(time.Millisecond * 800)
 
 		secondDamage := secondAttack.Damage
-		secondMessage := parseDamage(
-			&secondDamage,
-			secondAttack.Name,
-			secondAttack,
-			second,
-			first,
-		)
+		secondRoll := secondAttack.AttackBonus + rand.IntN(19) + 1
+		var secondMessage string
+		if secondRoll < first.ArmorClass[0].Value {
+			fmt.Printf("%s tried to use %s, but it missed!\n",
+				second.Name, secondAttack.Name)
+		} else {
+			secondMessage = parseDamage(
+				&secondDamage,
+				secondAttack.Name,
+				*secondAttack,
+				second,
+				first,
+			)
+		}
 		hpOne -= secondDamage
-		fmt.Println(secondMessage)
+		fmt.Print(secondMessage)
 		time.Sleep(time.Millisecond * 800)
 
 		fmt.Printf("%s HP Remaining: %d, %s HP Remaining: %d\n",
@@ -190,5 +209,6 @@ func parseDamage(
 		damageMessage += fmt.Sprintf("%s is immune to %s. ", target.Name,
 			damage.Type)
 	}
+	damageMessage += "\n"
 	return
 }
