@@ -32,7 +32,7 @@ func TestMainDefault(t *testing.T) {
 }
 
 func TestMainMonsters(t *testing.T) {
-	
+
 	origOut := os.Stdout
 	r, w, _ := os.Pipe()
 	os.Args = []string{"auxquest", "monsters"}
