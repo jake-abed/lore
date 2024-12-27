@@ -24,10 +24,12 @@ func CreateDefaultConfig() error {
 	if err != nil {
 		return err
 	}
+
 	home, err := os.UserHomeDir()
 	if err != nil {
 		return err
 	}
+
 	if !found {
 		err = os.Mkdir(home+"/.config/auxquest", 0766)
 		if err != nil {
