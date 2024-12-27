@@ -15,27 +15,33 @@ func commandMonsters(state *State) error {
 		return nil
 	}
 
-	if len(state.Args) > 2 && state.Args[1] == "-i" {
+	flag := state.Args[1]
+
+	if len(state.Args) > 2 && (flag == "-i" || flag == "--inspect") {
 		inspectMonster(state)
 		return nil
 	}
 
-	if len(state.Args) > 3 && state.Args[1] == "-f" {
+	if len(state.Args) > 3 && (flag == "-f" || flag == "--fight") {
 		monsterFight(state)
 		return nil
 	}
 
-	client := dndapi.NewClient(5 * time.Second)
+	if len(state.Args) > 1 && (flag == "-va" || flag == "--viewall") {
+		client := dndapi.NewClient(5 * time.Second)
 
-	monsters, err := client.GetAllMonsters()
-	if err != nil {
-		return err
-	}
+		monsters, err := client.GetAllMonsters()
+		if err != nil {
+			return err
+		}
 
-	fmt.Println(bold.Render("Showing all monsters!"))
-	for _, monster := range monsters {
-		fmt.Printf("Monster: %s - Index: %s\n", monster.Name, monster.Index)
+		fmt.Println(bold.Render("Viewing all monsters!"))
+		for _, monster := range monsters {
+			fmt.Printf("Monster: %s - Index: %s\n", monster.Name, monster.Index)
+		}
+		return nil
 	}
+	monstersHelp()
 	return nil
 }
 
@@ -47,8 +53,11 @@ func monstersHelp() {
 	inspectMessage := "Inspect information about specific monster."
 	fmt.Println(inspect + inspectMessage)
 	fight := bold.Render("  *** monsters -f <monster-1> <monster-2> | ")
-	fightMessage := "Simulate a fight between monsters.\n"
+	fightMessage := "Simulate a fight between monsters."
 	fmt.Println(fight + fightMessage)
+	view := bold.Render("  *** monsters -v | ")
+	viewMessage := "View all monsters. Pipe into grep for a good time!\n"
+	fmt.Println(view + viewMessage)
 }
 
 func inspectMonster(state *State) {

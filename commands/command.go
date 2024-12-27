@@ -28,10 +28,11 @@ func BuildCommands() map[string]Command {
 		},
 		"monsters": {
 			Name:        "monsters",
-			Description: "Learn about a monster and potentially store the data.",
+			Description: "Get info about monsters and simulate fights.",
 			Flags: map[string]string{
 				"-i": "Looks up info about a particular monster by name or id slug.",
 				"-f": "Simulate a fight between two monsters. Name or id slug work.",
+				"-va": "View all monsters on the D&D 5e OpenAPI.",
 			},
 			Callback: commandMonsters,
 		},
