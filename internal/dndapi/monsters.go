@@ -98,9 +98,9 @@ type Attack struct {
 }
 
 type AttackDamage struct {
-	Name   string
-	Type   string
-	Damage int
+	Name        string
+	Type        string
+	Damage      int
 	AttackBonus int
 }
 
@@ -134,9 +134,9 @@ func UseRandomAttack(attacks []*Attack) *AttackDamage {
 	damages := []*AttackDamage{}
 	for _, damage := range attack.Damage {
 		attackDamage := &AttackDamage{
-			Name:   attack.Name,
-			Type:   damage.DamageType.Name,
-			Damage: rollDamage(damage.DamageDice),
+			Name:        attack.Name,
+			Type:        damage.DamageType.Name,
+			Damage:      rollDamage(damage.DamageDice),
 			AttackBonus: attack.AttackBonus,
 		}
 		damages = append(damages, attackDamage)
