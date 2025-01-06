@@ -60,7 +60,7 @@ func commandNpcs(s *State) error {
 			fmt.Println("Hmmm... we couldn't find any NPCs with a similar name.")
 			return nil
 		}
-		fmt.Printf("AuxQuest found %d matching NPCs:\n", len(npcs))
+		fmt.Printf("Lore found %d matching NPCs:\n", len(npcs))
 		for _, npc := range npcs {
 			fmt.Printf("*** Name: %s | Id: %d | Race: %s | Class: %s\n",
 				npc.Name, npc.Id, npc.Race, npc.Class)
@@ -70,7 +70,7 @@ func commandNpcs(s *State) error {
 }
 
 func npcHelp() {
-	intro := "AuxQuest Npc Help\n"
+	intro := "Lore Npc Help\n"
 	introTip := "NPCs subcommand information"
 	fmt.Println(header.Render(intro + introTip))
 	add := bold.Render("  *** npc -a | ")

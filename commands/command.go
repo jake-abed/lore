@@ -51,8 +51,8 @@ func BuildCommands() map[string]Command {
 		"places": {
 			Name: "places",
 			Description: "Add, search, edit, and view worlds, regions, and " +
-				"locations. When interacting with, creating, or deleting a " +
-				"specific entry, you must pass a 'type' flag such as '--world' " +
+				"locations.\nWhen interacting with, creating, or deleting a " +
+				"specific entry, you must\npass a 'type' flag such as '--world' " +
 				"or '--region'",
 			Flags: map[string]string{
 				"-a":         "Add a place.",

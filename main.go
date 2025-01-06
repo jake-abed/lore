@@ -45,7 +45,7 @@ func main() {
 	} else {
 		command, ok := commands[args[0]]
 		if !ok {
-			fmt.Printf("AuxQuest has no %s command!\n", args[0])
+			fmt.Printf("Lore has no %s command!\n", args[0])
 			commands["help"].Callback(state)
 		} else {
 			command.Callback(state)

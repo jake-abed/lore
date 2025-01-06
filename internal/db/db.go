@@ -25,7 +25,7 @@ func New(db DBTX) *Queries {
 	return &Queries{Db: db}
 }
 
-const DEFAULT_PATH = "/.config/auxquest/sqlite.db"
+const DEFAULT_PATH = "/.config/lorecli/sqlite.db"
 
 func OpenDb(cfg *config.Config) (*sql.DB, error) {
 	var dbPath string

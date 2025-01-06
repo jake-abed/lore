@@ -46,7 +46,7 @@ func commandMonsters(state *State) error {
 }
 
 func monstersHelp() {
-	intro := "AuxQuest Monsters Help\n"
+	intro := "Lore Monsters Help\n"
 	introTip := "Monsters subcommands information"
 	fmt.Println(header.Render(intro + introTip))
 	inspect := bold.Render("  *** monsters -i <monster-name> | ")

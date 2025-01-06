@@ -11,7 +11,7 @@ func checkConfigDir() (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	path := home + "/.config/auxquest"
+	path := home + "/.config/lorecli"
 	_, err = os.ReadDir(path)
 	if err != nil {
 		return false, nil
@@ -31,20 +31,20 @@ func CreateDefaultConfig() error {
 	}
 
 	if !found {
-		err = os.Mkdir(home+"/.config/auxquest", 0766)
+		err = os.Mkdir(home+"/.config/lorecli", 0766)
 		if err != nil {
 			return err
 		}
 	}
 	cfg := &Config{
 		Username: "default",
-		DbPath:   "/.config/auxquest/sqlite.db",
+		DbPath:   "/.config/lorecli/sqlite.db",
 	}
 	buffer, err := json.Marshal(cfg)
 	if err != nil {
 		return err
 	}
-	err = os.WriteFile(home+"/.config/auxquest/config.json", buffer, 0766)
+	err = os.WriteFile(home+"/.config/lorecli/config.json", buffer, 0766)
 	if err != nil {
 		return err
 	}
@@ -63,7 +63,7 @@ func ReadConfig() (Config, error) {
 	if !found {
 		return Config{}, errors.New("No config file found!")
 	}
-	buffer, err := os.ReadFile(home + "/.config/auxquest/config.json")
+	buffer, err := os.ReadFile(home + "/.config/lorecli/config.json")
 	if err != nil {
 		return Config{}, err
 	}

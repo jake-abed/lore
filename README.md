@@ -5,7 +5,7 @@ I always keep a laptop up and running for looking up info and keeping notes.
 
 Currently a work in progress, but still functional!
 
-![Screenshot of auxquest in action](./static/lore.jpg)
+![Screenshot of Lore in action](./static/lore.jpg)
 
 ## Commands
 
@@ -24,12 +24,12 @@ Currently a work in progress, but still functional!
 
 ## Contributing
 
-Want to contribute to auxquest at all?
+Want to contribute to Lore at all?
 
 ### Clone the repo:
 ```bash
 git clone https://github.com/jake-abed/lore
-cd loer
+cd lore
 ```
 
 ### Build it:

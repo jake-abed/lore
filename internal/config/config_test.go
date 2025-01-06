@@ -11,7 +11,7 @@ func TestDefaultConfig(t *testing.T) {
 	if err != nil {
 	}
 	if ok {
-		os.Remove(home + ".config/auxquest/config.json")
+		os.Remove(home + ".config/lorecli/config.json")
 	}
 
 	err = CreateDefaultConfig()
@@ -24,8 +24,8 @@ func TestDefaultConfig(t *testing.T) {
 		t.Fatalf("An error occurred reading the config file: %!", err)
 	}
 
-	if cfg.DbPath != "/.config/auxquest/sqlite.db" {
-		t.Errorf("Expected \"/.config/auxquest/sqlite.db\" as DbPath got=%s",
+	if cfg.DbPath != "/.config/lorecli/sqlite.db" {
+		t.Errorf("Expected \"/.config/lorecli/sqlite.db\" as DbPath got=%s",
 			cfg.DbPath)
 	}
 

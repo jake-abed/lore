@@ -7,7 +7,7 @@ import (
 
 func commandHelp(state *State) error {
 	commands := BuildCommands()
-	intro := "Welcome to AuxQuest!\n"
+	intro := "Welcome to Lore!\n"
 	introMsg := "The following commands are available to you: "
 	fmt.Println(header.Render(intro + introMsg))
 	commandDiv := ""

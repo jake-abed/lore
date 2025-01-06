@@ -10,7 +10,7 @@ import (
 func TestMainDefault(t *testing.T) {
 	origOut := os.Stdout
 	r, w, _ := os.Pipe()
-	os.Args = []string{"auxquest"}
+	os.Args = []string{"lore"}
 	os.Stdout = w
 	main()
 	os.Stdout = origOut
@@ -18,7 +18,7 @@ func TestMainDefault(t *testing.T) {
 	out, _ := io.ReadAll(r)
 	readableOutput := string(out)
 	expected := []string{
-		"Welcome to AuxQuest!",
+		"Welcome to Lore!",
 		"monsters     <==>",
 		"*** -i",
 		"- View all monsters on the D&D 5e OpenAPI.",
@@ -35,7 +35,7 @@ func TestMainMonsters(t *testing.T) {
 
 	origOut := os.Stdout
 	r, w, _ := os.Pipe()
-	os.Args = []string{"auxquest", "monsters"}
+	os.Args = []string{"lore", "monsters"}
 	os.Stdout = w
 	main()
 	os.Stdout = origOut
@@ -43,7 +43,7 @@ func TestMainMonsters(t *testing.T) {
 	out, _ := io.ReadAll(r)
 	readableOutput := string(out)
 	expected := []string{
-		"AuxQuest Monsters Help",
+		"Lore Monsters Help",
 		"Monsters subcommands information",
 		"*** monsters -i <monster-name>",
 	}
