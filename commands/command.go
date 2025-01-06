@@ -1,8 +1,8 @@
 package commands
 
 import (
-	"github.com/jake-abed/auxquest/internal/config"
-	"github.com/jake-abed/auxquest/internal/db"
+	"github.com/jake-abed/lore/internal/config"
+	"github.com/jake-abed/lore/internal/db"
 )
 
 type Command struct {

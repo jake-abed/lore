@@ -1,11 +1,11 @@
-# auxquest
-A CLI tool for DM'ing Dungeons and Dragons written in Go. While I still
-largely run a pen & paper campaign, I always keep a laptop up and running for
-looking up info and keeping notes
+# Lore
+A CLI tool for game masters running D&D, Pathfinder, and other tabletop game
+campaigns. All written in Go. While I still largely run a pen & paper campaign,
+I always keep a laptop up and running for looking up info and keeping notes.
 
-Currently a work in progress.
+Currently a work in progress, but still functional!
 
-![Screenshot of auxquest in action](./static/auxquest.jpg)
+![Screenshot of auxquest in action](./static/lore.jpg)
 
 ## Commands
 
@@ -28,8 +28,8 @@ Want to contribute to auxquest at all?
 
 ### Clone the repo:
 ```bash
-git clone https://github.com/jake-abed/auxquest
-cd auxquest
+git clone https://github.com/jake-abed/lore
+cd loer
 ```
 
 ### Build it:

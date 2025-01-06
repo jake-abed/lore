@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/charmbracelet/huh"
-	"github.com/jake-abed/auxquest/internal/db"
+	"github.com/jake-abed/lore/internal/db"
 	"os"
 	"strconv"
 )

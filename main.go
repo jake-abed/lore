@@ -2,15 +2,16 @@ package main
 
 import (
 	"fmt"
-	"github.com/jake-abed/auxquest/commands"
-	"github.com/jake-abed/auxquest/internal/config"
-	"github.com/jake-abed/auxquest/internal/db"
-	"github.com/jake-abed/auxquest/internal/utils"
+	"github.com/jake-abed/lore/commands"
+	"github.com/jake-abed/lore/internal/config"
+	"github.com/jake-abed/lore/internal/db"
+	"github.com/jake-abed/lore/internal/utils"
 	_ "modernc.org/sqlite"
 	"os"
 )
 
 func main() {
+	// Only pass in args after cli app name.
 	args := utils.SanitizeArgs(os.Args[1:])
 	cfg, err := config.ReadConfig()
 	if err != nil {

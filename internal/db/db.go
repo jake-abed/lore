@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"github.com/jake-abed/auxquest/internal/config"
+	"github.com/jake-abed/lore/internal/config"
 	"github.com/pressly/goose/v3"
 	_ "modernc.org/sqlite"
 	"os"

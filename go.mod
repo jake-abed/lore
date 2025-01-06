@@ -1,4 +1,4 @@
-module github.com/jake-abed/auxquest
+module github.com/jake-abed/lore
 
 go 1.23.2
 
