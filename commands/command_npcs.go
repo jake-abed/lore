@@ -132,8 +132,6 @@ func addNpc(s *State) error {
 				Options(
 					huh.NewOption("Male", "male"),
 					huh.NewOption("Female", "female"),
-					huh.NewOption("Intersex", "intersex"),
-					huh.NewOption("?", "?"),
 					huh.NewOption("Other", "other"),
 				).
 				Value(&sex),

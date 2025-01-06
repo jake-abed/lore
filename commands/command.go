@@ -48,5 +48,23 @@ func BuildCommands() map[string]Command {
 			},
 			Callback: commandNpcs,
 		},
+		"places": {
+			Name: "places",
+			Description: "Add, search, edit, and view worlds, regions, and " +
+				"locations. When interacting with, creating, or deleting a " +
+				"specific entry, you must pass a 'type' flag such as '--world' " +
+				"or '--region'",
+			Flags: map[string]string{
+				"-a":         "Add a place.",
+				"-e":         "Edit a place.",
+				"-s":         "Search places by name. Returns all possible matches",
+				"-d":         "Delete a place by name. Case-sensitive.",
+				"-v":         "Inspect a place and it's information by name.",
+				"--world":    "Specify an operation on a world.",
+				"--region":   "Specify an operation on a region.",
+				"--location": "Specify an operation on a location.",
+			},
+			Callback: commandPlaces,
+		},
 	}
 }
