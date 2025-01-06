@@ -5,7 +5,7 @@ I always keep a laptop up and running for looking up info and keeping notes.
 
 Currently a work in progress, but still functional!
 
-![Screenshot of Lore in action](./static/lore.jpg)
+![Screenshot of Lore in action](./static/lore.png)
 
 ## Commands
 

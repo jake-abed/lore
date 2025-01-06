@@ -1,4 +1,4 @@
-name: AuxQuest CI
+name: Lore CI
 
 on:
   push:
