@@ -7,8 +7,8 @@ import (
 type PlaceType string
 
 const (
-	WORLD = "WORLD"
-	REGION = "REGION"
+	WORLD    = "WORLD"
+	REGION   = "REGION"
 	LOCATION = "LOCATION"
 )
 
@@ -23,7 +23,7 @@ type World struct {
 	Id   int
 }
 
-func (w *World) Type() PlaceType { return WORLD }
+func (w *World) Type() PlaceType        { return WORLD }
 func (w *World) Inspect() (int, string) { return w.Id, w.Name }
 
 type WorldParams struct {

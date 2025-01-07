@@ -1,12 +1,11 @@
 package commands
 
 import (
-	"fmt"
 	"context"
-	
+	"fmt"
+
 	"github.com/charmbracelet/huh"
 	"github.com/jake-abed/lore/internal/db"
-
 )
 
 func commandPlaces(s *State) error {
@@ -60,7 +59,7 @@ func addPlace(s *State, typeFlag string) (db.Place, error) {
 	switch typeFlag {
 	case "--world":
 		world := worldForm(db.World{})
-		worldParams := db.WorldParams{ Name: world.Name, Desc: world.Desc }
+		worldParams := db.WorldParams{Name: world.Name, Desc: world.Desc}
 
 		newWorld, err := s.Db.AddWorld(context.Background(), &worldParams)
 		if err != nil {
@@ -84,8 +83,8 @@ func worldForm(world db.World) db.World {
 			huh.NewText().
 				Title("World Description: ").
 				Value(&world.Desc),
-			),
-		).WithTheme(huh.ThemeBase16()).Run()
+		),
+	).WithTheme(huh.ThemeBase16()).Run()
 	return world
 }
 
