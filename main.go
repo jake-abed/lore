@@ -48,7 +48,10 @@ func main() {
 			fmt.Printf("Lore has no %s command!\n", args[0])
 			commands["help"].Callback(state)
 		} else {
-			command.Callback(state)
+			err := command.Callback(state)
+			if err != nil {
+				fmt.Println(err)
+			}
 		}
 	}
 }
