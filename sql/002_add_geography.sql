@@ -1,7 +1,7 @@
 -- +goose Up
 CREATE TABLE worlds (
   id INTEGER UNIQUE PRIMARY KEY,
-  name TEXT,
+  name TEXT UNIQUE,
   description TEXT
 );
 

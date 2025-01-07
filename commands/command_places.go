@@ -2,6 +2,11 @@ package commands
 
 import (
 	"fmt"
+	"context"
+	
+	"github.com/charmbracelet/huh"
+	"github.com/jake-abed/lore/internal/db"
+
 )
 
 func commandPlaces(s *State) error {
@@ -30,7 +35,11 @@ func commandPlaces(s *State) error {
 
 	switch flag {
 	case "-a":
-		fmt.Println("Add `add` fn!")
+		place, err := addPlace(s, typeFlag)
+		if err != nil {
+			return err
+		}
+		fmt.Println(place)
 		return nil
 	case "-v":
 		fmt.Println("Add `view` fn!")
@@ -46,6 +55,41 @@ func commandPlaces(s *State) error {
 		return nil
 	}
 }
+
+func addPlace(s *State, typeFlag string) (db.Place, error) {
+	switch typeFlag {
+	case "--world":
+		world := worldForm(db.World{})
+		worldParams := db.WorldParams{ Name: world.Name, Desc: world.Desc }
+
+		newWorld, err := s.Db.AddWorld(context.Background(), &worldParams)
+		if err != nil {
+			return &db.World{}, err
+		}
+
+		return newWorld, nil
+	default:
+		return nil, fmt.Errorf("%s is not a valid typeflag", typeFlag)
+	}
+}
+
+// Form Functions
+
+func worldForm(world db.World) db.World {
+	huh.NewForm(
+		huh.NewGroup(
+			huh.NewInput().
+				Title("World Name: ").
+				Value(&world.Name),
+			huh.NewText().
+				Title("World Description: ").
+				Value(&world.Desc),
+			),
+		).WithTheme(huh.ThemeBase16()).Run()
+	return world
+}
+
+// Flag helper functions
 
 func isPlaceTypeFlag(flag string) bool {
 	return flag == "--world" || flag == "--region" || flag == "-location"
