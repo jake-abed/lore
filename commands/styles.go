@@ -1,6 +1,8 @@
 package commands
 
 import (
+	"fmt"
+
 	"github.com/charmbracelet/lipgloss"
 )
 
@@ -29,3 +31,7 @@ var (
 			BorderForeground(red).
 			Padding(1, 2)
 )
+
+func printHeader(s string) {
+	fmt.Println(header.Render(s))
+}

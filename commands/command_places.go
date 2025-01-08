@@ -40,7 +40,8 @@ func commandPlaces(s *State) error {
 			fmt.Println("Uh oh! Lore errored out while adding this place: ")
 			return err
 		}
-		fmt.Println(place)
+		world, _ := place.(*db.World)
+		printWorld(world)
 		return nil
 	case "-v":
 		place, err := getPlaceByName(s, typeFlag, strings.ToLower(flagArg))
@@ -48,7 +49,8 @@ func commandPlaces(s *State) error {
 			fmt.Printf("Hmm... Lore couldn't find %s. Here's the error: \n", flagArg)
 			return err
 		}
-		fmt.Println(place)
+		world, _ := place.(*db.World)
+		printWorld(world)
 		return nil
 	case "-e":
 		fmt.Println("Add `edit` fn!")
@@ -60,6 +62,14 @@ func commandPlaces(s *State) error {
 		fmt.Println("Help!")
 		return nil
 	}
+}
+
+// Place Printers
+
+func printWorld(w *db.World) {
+	headerMsg := fmt.Sprintf("World: %-16s Id: %-2d", w.Name, w.Id)
+	printHeader(headerMsg)
+	fmt.Println(bold.Render("Description: ") + w.Desc)
 }
 
 func addPlace(s *State, typeFlag string) (db.Place, error) {

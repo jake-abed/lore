@@ -13,7 +13,7 @@ const (
 )
 
 type Place interface {
-	Type() PlaceType
+	PlaceType() PlaceType
 	Inspect() (int, string)
 }
 
@@ -23,13 +23,24 @@ type World struct {
 	Id   int
 }
 
-func (w *World) Type() PlaceType        { return WORLD }
+func (w *World) PlaceType() PlaceType   { return WORLD }
 func (w *World) Inspect() (int, string) { return w.Id, w.Name }
 
 type WorldParams struct {
 	Name string
 	Desc string
 }
+
+type Region struct {
+	Name    string
+	Desc    string
+	Type    string
+	Id      int
+	WorldId int
+}
+
+func (r *Region) PlaceType() PlaceType   { return REGION }
+func (r *Region) Inspect() (int, string) { return r.Id, r.Name }
 
 const createWorldQuery = `INSERT INTO worlds (name, description)
 VALUES ($1, $2) RETURNING *`
