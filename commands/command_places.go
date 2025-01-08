@@ -3,6 +3,7 @@ package commands
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/charmbracelet/huh"
 	"github.com/jake-abed/lore/internal/db"
@@ -36,12 +37,18 @@ func commandPlaces(s *State) error {
 	case "-a":
 		place, err := addPlace(s, typeFlag)
 		if err != nil {
+			fmt.Println("Uh oh! Lore errored out while adding this place: ")
 			return err
 		}
 		fmt.Println(place)
 		return nil
 	case "-v":
-		fmt.Println("Add `view` fn!")
+		place, err := getPlaceByName(s, typeFlag, strings.ToLower(flagArg))
+		if err != nil {
+			fmt.Printf("Hmm... Lore couldn't find %s. Here's the error: \n", flagArg)
+			return err
+		}
+		fmt.Println(place)
 		return nil
 	case "-e":
 		fmt.Println("Add `edit` fn!")
@@ -69,6 +76,19 @@ func addPlace(s *State, typeFlag string) (db.Place, error) {
 		return newWorld, nil
 	default:
 		return nil, fmt.Errorf("%s is not a valid typeflag", typeFlag)
+	}
+}
+
+func getPlaceByName(s *State, typeFlag string, arg string) (db.Place, error) {
+	switch typeFlag {
+	case "--world":
+		world, err := s.Db.GetWorldByName(context.Background(), arg)
+		if err != nil {
+			return nil, err
+		}
+		return world, nil
+	default:
+		return nil, nil
 	}
 }
 
