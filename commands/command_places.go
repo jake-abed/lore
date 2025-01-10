@@ -48,8 +48,7 @@ func commandPlaces(s *State) error {
 			fmt.Printf("Hmm... Lore couldn't find %s. Here's the error: \n", flagArg)
 			return err
 		}
-		world, _ := place.(*db.World)
-		printWorld(world)
+		printPlace(place)
 		return nil
 	case "-e":
 		fmt.Println("Add `edit` fn!")
@@ -74,6 +73,7 @@ func printPlace(p db.Place) {
 		area := p.(*db.Area)
 		printArea(area)
 	default:
+		fmt.Println(p)
 		fmt.Printf("Lore has no such place type as %T\n", p)
 	}
 }
@@ -84,13 +84,13 @@ func printWorld(w *db.World) {
 	fmt.Println(bold.Render("Description: ") + w.Desc)
 }
 
-func printArea(r *db.Area) {
-	headerMsg := fmt.Sprintf("Area: %-16s Id: %-2d", r.Name, r.Id)
+func printArea(a *db.Area) {
+	headerMsg := fmt.Sprintf("Area: %-16s Id: %-2d", a.Name, a.Id)
 	printHeader(headerMsg)
-	fmt.Println(bold.Render("Area Type: ") +r .Type)
-	fmt.Println(bold.Render("Description: ") + r.Desc)
+	fmt.Println(bold.Render("Area Type: ") + a.Type)
+	fmt.Println(bold.Render("Description: ") + a.Desc)
 	fmt.Println(bold.Render("Belongs to World Id: ") +
-		fmt.Sprintf("%d", r.WorldId))
+		fmt.Sprintf("%d", a.WorldId))
 }
 
 func addPlace(s *State, typeFlag string) (db.Place, error) {
@@ -133,6 +133,12 @@ func getPlaceByName(s *State, typeFlag string, arg string) (db.Place, error) {
 			return nil, err
 		}
 		return world, nil
+	case "--area":
+		area, err := s.Db.GetAreaByName(context.Background(), arg)
+		if err != nil {
+			return nil, err
+		}
+		return area, nil
 	default:
 		return nil, nil
 	}
