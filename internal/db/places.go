@@ -8,7 +8,7 @@ type PlaceType string
 
 const (
 	WORLD    = "WORLD"
-	REGION   = "REGION"
+	AREA     = "AREA"
 	LOCATION = "LOCATION"
 )
 
@@ -31,7 +31,7 @@ type WorldParams struct {
 	Desc string
 }
 
-type Region struct {
+type Area struct {
 	Name    string
 	Desc    string
 	Type    string
@@ -39,11 +39,18 @@ type Region struct {
 	WorldId int
 }
 
-func (r *Region) PlaceType() PlaceType   { return REGION }
-func (r *Region) Inspect() (int, string) { return r.Id, r.Name }
+func (a *Area) PlaceType() PlaceType   { return AREA }
+func (a *Area) Inspect() (int, string) { return a.Id, a.Name }
+
+type AreaParams struct {
+	Name    string
+	Desc    string
+	Type    string
+	WorldId int
+}
 
 const createWorldQuery = `INSERT INTO worlds (name, description)
-VALUES ($1, $2) RETURNING *`
+	VALUES ($1, $2) RETURNING *`
 
 func (q *Queries) AddWorld(
 	ctx context.Context,
@@ -72,4 +79,100 @@ func (q *Queries) GetWorldByName(
 		return &World{}, err
 	}
 	return &world, nil
+}
+
+const getXWorldsQuery = `
+SELECT * FROM worlds ORDER BY worlds.id ASC LIMIT $1 OFFSET $2
+`
+
+func (q *Queries) GetXWorlds(
+	ctx context.Context,
+	x int,
+	offset int,
+) ([]*World, error) {
+	worlds := []*World{}
+	rows, err := q.Db.QueryContext(
+		context.Background(),
+		getXWorldsQuery,
+		x,
+		offset*x,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		world := World{}
+		err := rows.Scan(&world.Id, &world.Name, &world.Desc)
+		if err != nil {
+			return nil, err
+		}
+
+		worlds = append(worlds, &world)
+	}
+
+	return worlds, nil
+}
+
+const createAreaQuery = `
+INSERT INTO areas (name, description, type, world_id)
+	VALUES ($1, $2, $3, $4)
+	RETURNING *
+`
+
+func (q *Queries) AddArea(
+	ctx context.Context,
+	params *AreaParams,
+) (*Area, error) {
+	area := Area{}
+	row := q.Db.QueryRowContext(
+		ctx,
+		createAreaQuery,
+		params.Name,
+		params.Desc,
+		params.Type,
+		params.WorldId,
+	)
+
+	err := row.Scan(
+		&area.Id,
+		&area.Name,
+		&area.Type,
+		&area.Desc,
+		&area.WorldId,
+	)
+	if err != nil {
+		return &Area{}, err
+	}
+
+	return &area, nil
+}
+
+const getAreaByNameQuery = `
+SELECT * FROM areas WHERE LOWER(areas.name) LIKE LOWER($1) LIMIT 1
+`
+
+func (q *Queries) GetAreaByName(
+	ctx context.Context,
+	name string,
+) (*Area, error) {
+	area := Area{}
+	row := q.Db.QueryRowContext(
+		ctx,
+		getAreaByNameQuery,
+		name,
+	)
+
+	err := row.Scan(
+		&area.Id,
+		&area.Name,
+		&area.Type,
+		&area.Desc,
+		&area.WorldId,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &area, nil
 }

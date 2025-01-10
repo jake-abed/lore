@@ -40,8 +40,7 @@ func commandPlaces(s *State) error {
 			fmt.Println("Uh oh! Lore errored out while adding this place: ")
 			return err
 		}
-		world, _ := place.(*db.World)
-		printWorld(world)
+		printPlace(place)
 		return nil
 	case "-v":
 		place, err := getPlaceByName(s, typeFlag, strings.ToLower(flagArg))
@@ -66,10 +65,32 @@ func commandPlaces(s *State) error {
 
 // Place Printers
 
+func printPlace(p db.Place) {
+	switch p.(type) {
+	case *db.World:
+		world := p.(*db.World)
+		printWorld(world)
+	case *db.Area:
+		area := p.(*db.Area)
+		printArea(area)
+	default:
+		fmt.Printf("Lore has no such place type as %T\n", p)
+	}
+}
+
 func printWorld(w *db.World) {
 	headerMsg := fmt.Sprintf("World: %-16s Id: %-2d", w.Name, w.Id)
 	printHeader(headerMsg)
 	fmt.Println(bold.Render("Description: ") + w.Desc)
+}
+
+func printArea(r *db.Area) {
+	headerMsg := fmt.Sprintf("Area: %-16s Id: %-2d", r.Name, r.Id)
+	printHeader(headerMsg)
+	fmt.Println(bold.Render("Area Type: ") +r .Type)
+	fmt.Println(bold.Render("Description: ") + r.Desc)
+	fmt.Println(bold.Render("Belongs to World Id: ") +
+		fmt.Sprintf("%d", r.WorldId))
 }
 
 func addPlace(s *State, typeFlag string) (db.Place, error) {
@@ -84,6 +105,21 @@ func addPlace(s *State, typeFlag string) (db.Place, error) {
 		}
 
 		return newWorld, nil
+	case "--area":
+		area := areaForm(s, db.Area{})
+		areaParams := &db.AreaParams{
+			Name:    area.Name,
+			Type:    area.Type,
+			Desc:    area.Desc,
+			WorldId: area.WorldId,
+		}
+
+		newArea, err := s.Db.AddArea(context.Background(), areaParams)
+		if err != nil {
+			return &db.Area{}, err
+		}
+
+		return newArea, err
 	default:
 		return nil, fmt.Errorf("%s is not a valid typeflag", typeFlag)
 	}
@@ -115,13 +151,53 @@ func worldForm(world db.World) db.World {
 				Value(&world.Desc),
 		),
 	).WithTheme(huh.ThemeBase16()).Run()
+
 	return world
+}
+
+func areaForm(s *State, area db.Area) db.Area {
+	worlds, _ := s.Db.GetXWorlds(context.Background(), 10, 0)
+	huh.NewForm(
+		huh.NewGroup(
+			huh.NewInput().
+				Title("Area Name: ").
+				Value(&area.Name),
+			huh.NewInput().
+				Title("Area Type: ").
+				Value(&area.Type),
+			huh.NewText().
+				Title("Area Description: ").
+				Value(&area.Desc),
+		),
+		newWorldSelectGroup(worlds, area.Name, &area.WorldId),
+	).WithTheme(huh.ThemeBase16()).Run()
+
+	return area
+}
+
+func newWorldSelectGroup(worlds []*db.World, name string, val *int) *huh.Group {
+	options := []huh.Option[int]{}
+
+	for _, world := range worlds {
+		option := huh.NewOption(fmt.Sprintf("%d - %s", world.Id, world.Name),
+			world.Id,
+		)
+
+		options = append(options, option)
+	}
+
+	return huh.NewGroup(
+		huh.NewSelect[int]().
+			Title(fmt.Sprintf("Which world does %s belong to?", name)).
+			Options(options...).
+			Value(val),
+	)
 }
 
 // Flag helper functions
 
 func isPlaceTypeFlag(flag string) bool {
-	return flag == "--world" || flag == "--region" || flag == "-location"
+	return flag == "--world" || flag == "--area" || flag == "-location"
 }
 
 func isCommandFlag(flag string) bool {
