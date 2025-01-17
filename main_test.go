@@ -19,9 +19,9 @@ func TestMainDefault(t *testing.T) {
 	readableOutput := string(out)
 	expected := []string{
 		"Welcome to Lore!",
-		"monsters     <==>",
-		"*** -i",
-		"- View all monsters on the D&D 5e OpenAPI.",
+		"monsters",
+		"places",
+		"npcs",
 		"Get information about all available commands.",
 	}
 	for _, phrase := range expected {
