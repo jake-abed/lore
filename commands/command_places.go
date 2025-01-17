@@ -57,7 +57,8 @@ func commandPlaces(s *State) error {
 		fmt.Println("Add `delete` fn!")
 		return nil
 	default:
-		fmt.Println("Help!")
+		msg := fmt.Sprintf("Uh oh! You used an invalid flag or wrote your command wrong!")
+		fmt.Println(ErrorMsg.Render(msg))
 		return nil
 	}
 }

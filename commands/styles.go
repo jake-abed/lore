@@ -9,13 +9,20 @@ import (
 var (
 	red   = lipgloss.Color("#9B2121")
 	white = lipgloss.Color("#F1F1F1")
+	pink  = lipgloss.Color("168")
 
 	bold = lipgloss.NewStyle().
 		Bold(true).
-		Foreground(lipgloss.Color("168"))
+		Foreground(pink)
 
 	italic = lipgloss.NewStyle().
 		Italic(true)
+
+	ErrorMsg = lipgloss.NewStyle().
+		Foreground(pink).
+		BorderStyle(lipgloss.RoundedBorder()).
+		Padding(1, 2).
+		BorderForeground(red)
 
 	header = lipgloss.NewStyle().
 		Bold(true).

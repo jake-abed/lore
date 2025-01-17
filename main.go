@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 	"github.com/jake-abed/lore/commands"
 	"github.com/jake-abed/lore/internal/config"
 	"github.com/jake-abed/lore/internal/db"
@@ -39,14 +40,24 @@ func main() {
 		Db:   queries,
 	}
 
-	commands := commands.BuildCommands()
+	allCommands := commands.BuildCommands()
 	if len(args) == 0 {
-		commands["help"].Callback(state)
+		allCommands["help"].Callback(state)
 	} else {
-		command, ok := commands[args[0]]
+		command, ok := allCommands[args[0]]
 		if !ok {
-			fmt.Printf("Lore has no %s command!\n", args[0])
-			commands["help"].Callback(state)
+			msg := fmt.Sprintf("Lore has no %s command!", args[0])
+			fmt.Println(commands.ErrorMsg.Render(msg))
+			time.Sleep(1200 * time.Millisecond)
+			fmt.Print("Now showing the help command")
+			time.Sleep(311 * time.Millisecond)
+			fmt.Print(".")
+			time.Sleep(311 * time.Millisecond)
+			fmt.Print(".")
+			time.Sleep(311 * time.Millisecond)
+			fmt.Print(".\n")
+			time.Sleep(311 * time.Millisecond)
+			allCommands["help"].Callback(state)
 		} else {
 			err := command.Callback(state)
 			if err != nil {

@@ -7,9 +7,10 @@ import (
 type PlaceType string
 
 const (
-	WORLD    = "WORLD"
-	AREA     = "AREA"
-	LOCATION = "LOCATION"
+	WORLD       = "World"
+	AREA        = "Area"
+	LOCATION    = "Location"
+	SUBLOCATION = "Sublocation"
 )
 
 type Place interface {
@@ -47,6 +48,42 @@ type AreaParams struct {
 	Desc    string
 	Type    string
 	WorldId int
+}
+
+type Location struct {
+	Name   string
+	Type   string
+	Desc   string
+	Id     int
+	AreaId int
+}
+
+func (l *Location) PlaceType() PlaceType   { return LOCATION }
+func (l *Location) Inspect() (int, string) { return l.Id, l.Name }
+
+type LocationParams struct {
+	Name   string
+	Type   string
+	Desc   string
+	AreaId int
+}
+
+type Sublocation struct {
+	Name       string
+	Type       string
+	Desc       string
+	Id         int
+	LocationId int
+}
+
+func (s *Sublocation) PlaceType() PlaceType   { return SUBLOCATION }
+func (s *Sublocation) Inspect() (int, string) { return s.Id, s.Name }
+
+type SublocationParams struct {
+	Name       string
+	Type       string
+	Desc       string
+	LocationId string
 }
 
 const createWorldQuery = `INSERT INTO worlds (name, description)
@@ -175,4 +212,130 @@ func (q *Queries) GetAreaByName(
 	}
 
 	return &area, nil
+}
+
+const createLocationQuery = `
+INSERT INTO locations (name, description, type, area_id)
+	VALUES ($1, $2, $3, $4)
+	RETURNING *
+`
+
+func (q *Queries) AddLocation(
+	ctx context.Context,
+	params *LocationParams,
+) (*Location, error) {
+	location := Location{}
+	row := q.Db.QueryRowContext(
+		ctx,
+		createLocationQuery,
+		params.Name,
+		params.Desc,
+		params.Type,
+		params.AreaId,
+	)
+
+	err := row.Scan(
+		&location.Id,
+		&location.Name,
+		&location.Type,
+		&location.Desc,
+		&location.AreaId,
+	)
+	if err != nil {
+		return &Location{}, err
+	}
+
+	return &location, nil
+}
+
+const getLocationByNameQuery = `
+SELECT * FROM locations WHERE LOWER(locations.name) LIKE LOWER($1) LIMIT 1
+`
+
+func (q *Queries) GetLocationByName(
+	ctx context.Context,
+	name string,
+) (*Location, error) {
+	location := Location{}
+	row := q.Db.QueryRowContext(
+		ctx,
+		getLocationByNameQuery,
+		name,
+	)
+
+	err := row.Scan(
+		&location.Id,
+		&location.Name,
+		&location.Type,
+		&location.Desc,
+		&location.AreaId,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &location, nil
+}
+
+const createSublocationQuery = `
+INSERT INTO sublocations (name, description, type, location_id)
+	VALUES ($1, $2, $3, $4)
+	RETURNING *
+`
+
+func (q *Queries) AddSublocation(
+	ctx context.Context,
+	params *SublocationParams,
+) (*Sublocation, error) {
+	sublocation := Sublocation{}
+	row := q.Db.QueryRowContext(
+		ctx,
+		createSublocationQuery,
+		params.Name,
+		params.Desc,
+		params.Type,
+		params.LocationId,
+	)
+
+	err := row.Scan(
+		&sublocation.Id,
+		&sublocation.Name,
+		&sublocation.Type,
+		&sublocation.Desc,
+		&sublocation.LocationId,
+	)
+	if err != nil {
+		return &Sublocation{}, err
+	}
+
+	return &sublocation, nil
+}
+
+const getSublocationByNameQuery = `
+SELECT * FROM locations WHERE LOWER(locations.name) LIKE LOWER($1) LIMIT 1
+`
+
+func (q *Queries) GetSublocationByName(
+	ctx context.Context,
+	name string,
+) (*Sublocation, error) {
+	sublocation := Sublocation{}
+	row := q.Db.QueryRowContext(
+		ctx,
+		getSublocationByNameQuery,
+		name,
+	)
+
+	err := row.Scan(
+		&sublocation.Id,
+		&sublocation.Name,
+		&sublocation.Type,
+		&sublocation.Desc,
+		&sublocation.LocationId,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &sublocation, nil
 }
