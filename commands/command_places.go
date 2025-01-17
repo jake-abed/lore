@@ -3,6 +3,7 @@ package commands
 import (
 	"context"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/charmbracelet/huh"
@@ -230,7 +231,8 @@ func newPlaceSelectGroup(places interface{}, name string, val *int) *huh.Group {
 			options = append(options, option)
 		}
 	default:
-		panic("ARGHGHGHGH!!!")
+		fmt.Println(ErrorMsg.Render("Uh oh! You need a place this can belong to!"))
+		os.Exit(1)
 	}
 
 	return huh.NewGroup(

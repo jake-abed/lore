@@ -38,7 +38,7 @@ func BuildCommands() map[string]Command {
 		},
 		"npcs": {
 			Name:        "npcs",
-			Description: "Add, search, edit, and view info about NPCs.",
+			Description: "Add, search, edit, & view info about NPCs.",
 			Flags: map[string]string{
 				"-v": "Inspect an NPC and view their info.",
 				"-a": "Add an NPC to your local database for your campaign.",
@@ -49,20 +49,18 @@ func BuildCommands() map[string]Command {
 			Callback: commandNpcs,
 		},
 		"places": {
-			Name: "places",
-			Description: "Add, search, edit, and view worlds, regions, and " +
-				"locations.\nWhen interacting with, creating, or deleting a " +
-				"specific entry, you must\npass a 'type' flag such as '--world' " +
-				"or '--region'",
+			Name:        "places",
+			Description: "Add, search, edit, & view worlds, areas, & locations.",
 			Flags: map[string]string{
-				"-a":         "Add a place.",
-				"-e":         "Edit a place.",
-				"-s":         "Search places by name. Returns all possible matches",
-				"-d":         "Delete a place by name. Case-sensitive.",
-				"-v":         "Inspect a place and it's information by name.",
-				"--world":    "Specify an operation on a world.",
-				"--region":   "Specify an operation on a region.",
-				"--location": "Specify an operation on a location.",
+				"-a":            "Add a place.",
+				"-e":            "Edit a place.",
+				"-s":            "Search places by name. Returns all possible matches",
+				"-d":            "Delete a place by name. Case-sensitive.",
+				"-v":            "Inspect a place and it's information by name.",
+				"--world":       "Specify an operation on a world.",
+				"--area":        "Specify an operation on an area.",
+				"--location":    "Specify an operation on a location.",
+				"--sublocation": "Specify an operation on a sublocation.",
 			},
 			Callback: commandPlaces,
 		},
