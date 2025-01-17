@@ -176,26 +176,66 @@ func areaForm(s *State, area db.Area) db.Area {
 				Title("Area Description: ").
 				Value(&area.Desc),
 		),
-		newWorldSelectGroup(worlds, area.Name, &area.WorldId),
+		newPlaceSelectGroup(worlds, area.Name, &area.WorldId),
 	).WithTheme(huh.ThemeBase16()).Run()
 
 	return area
 }
 
-func newWorldSelectGroup(worlds []*db.World, name string, val *int) *huh.Group {
+func locationForm(s *State, location db.Location) db.Location {
+	worlds, _ := s.Db.GetXWorlds(context.Background(), 10, 0)
+	var worldId int
+	huh.NewForm(
+		huh.NewGroup(
+			huh.NewInput().
+				Title("Location Name: ").
+				Value(&location.Name),
+			huh.NewInput().
+				Title("Location Type: ").
+				Value(&location.Type),
+			huh.NewText().
+				Title("Location Description: ").
+				Value(&location.Desc),
+		),
+		newPlaceSelectGroup(worlds, location.Name, &worldId),
+	).WithTheme(huh.ThemeBase16()).Run()
+
+	areas, _ := s.Db.GetXAreas(context.Background(), worldId, 10, 0)
+
+	huh.NewForm(
+		newPlaceSelectGroup(areas, location.Name, &location.AreaId),
+	).WithTheme(huh.ThemeBase16()).Run()
+
+	return location
+}
+
+func newPlaceSelectGroup(places interface{}, name string, val *int) *huh.Group {
 	options := []huh.Option[int]{}
 
-	for _, world := range worlds {
-		option := huh.NewOption(fmt.Sprintf("%d - %s", world.Id, world.Name),
-			world.Id,
-		)
+	switch places.(type) {
+	case []*db.World:
+		worlds := places.([]*db.World)
+		for _, world := range worlds {
+			id, name := world.Inspect()
+			option := huh.NewOption(fmt.Sprintf("%d - %s", id, name), id)
 
-		options = append(options, option)
+			options = append(options, option)
+		}
+	case []*db.Area:
+		areas := places.([]*db.Area)
+		for _, area := range areas {
+			id, name := area.Inspect()
+			option := huh.NewOption(fmt.Sprintf("%d - %s", id, name), id)
+
+			options = append(options, option)
+		}
+	default:
+		panic("ARGHGHGHGH!!!")
 	}
 
 	return huh.NewGroup(
 		huh.NewSelect[int]().
-			Title(fmt.Sprintf("Which world does %s belong to?", name)).
+			Title(fmt.Sprintf("Which place does %s belong to?", name)).
 			Options(options...).
 			Value(val),
 	)

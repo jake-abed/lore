@@ -19,10 +19,10 @@ var (
 		Italic(true)
 
 	ErrorMsg = lipgloss.NewStyle().
-		Foreground(pink).
-		BorderStyle(lipgloss.RoundedBorder()).
-		Padding(1, 2).
-		BorderForeground(red)
+			Foreground(pink).
+			BorderStyle(lipgloss.RoundedBorder()).
+			Padding(1, 2).
+			BorderForeground(red)
 
 	header = lipgloss.NewStyle().
 		Bold(true).

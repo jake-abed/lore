@@ -214,6 +214,42 @@ func (q *Queries) GetAreaByName(
 	return &area, nil
 }
 
+const getXAreasQuery = `
+SELECT * FROM areas WHERE areas.world_id LIKE $1
+	ORDER BY areas.id ASC LIMIT $2 OFFSET $3
+`
+
+func (q *Queries) GetXAreas(
+	ctx context.Context,
+	worldId int,
+	x int,
+	offset int,
+) ([]*Area, error) {
+	areas := []*Area{}
+	rows, err := q.Db.QueryContext(
+		context.Background(),
+		getXAreasQuery,
+		worldId,
+		x,
+		offset*x,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		area := Area{}
+		err := rows.Scan(&area.Id, &area.Name, &area.Desc)
+		if err != nil {
+			return nil, err
+		}
+
+		areas = append(areas, &area)
+	}
+
+	return areas, nil
+}
+
 const createLocationQuery = `
 INSERT INTO locations (name, description, type, area_id)
 	VALUES ($1, $2, $3, $4)
@@ -275,6 +311,39 @@ func (q *Queries) GetLocationByName(
 	}
 
 	return &location, nil
+}
+
+const getXLocationsQuery = `
+SELECT * FROM locations ORDER BY locations.id ASC LIMIT $1 OFFSET $2
+`
+
+func (q *Queries) GetXLocations(
+	ctx context.Context,
+	x int,
+	offset int,
+) ([]*Location, error) {
+	locations := []*Location{}
+	rows, err := q.Db.QueryContext(
+		context.Background(),
+		getXLocationsQuery,
+		x,
+		offset*x,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		location := Location{}
+		err := rows.Scan(&location.Id, &location.Name, &location.Desc)
+		if err != nil {
+			return nil, err
+		}
+
+		locations = append(locations, &location)
+	}
+
+	return locations, nil
 }
 
 const createSublocationQuery = `

@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
-	"time"
 	"github.com/jake-abed/lore/commands"
 	"github.com/jake-abed/lore/internal/config"
 	"github.com/jake-abed/lore/internal/db"
 	"github.com/jake-abed/lore/internal/utils"
 	_ "modernc.org/sqlite"
 	"os"
+	"time"
 )
 
 func main() {
