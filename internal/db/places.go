@@ -118,6 +118,31 @@ func (q *Queries) GetWorldByName(
 	return &world, nil
 }
 
+const updateWorldByIdQuery = `UPDATE worlds
+	SET name = $1, description = $2 WHERE id = $3
+	RETURNING *
+`
+
+func (q *Queries) UpdateWorldById(
+	ctx context.Context,
+	world World,
+) (*World, error) {
+	updatedWorld := World{}
+	row := q.Db.QueryRowContext(
+		ctx,
+		updateWorldByIdQuery,
+		world.Name,
+		world.Desc,
+		world.Id,
+	)
+	err := row.Scan(&updatedWorld.Id, &updatedWorld.Name, &updatedWorld.Desc)
+	if err != nil {
+		return &World{}, err
+	}
+
+	return &updatedWorld, nil
+}
+
 const getXWorldsQuery = `
 SELECT * FROM worlds ORDER BY worlds.id ASC LIMIT $1 OFFSET $2
 `

@@ -57,7 +57,18 @@ func commandPlaces(s *State) error {
 		printPlace(place)
 		return nil
 	case "-e":
-		fmt.Println("Add `edit` fn!")
+		place, err := getPlaceByName(s, typeFlag, strings.ToLower(flagArg))
+		if err != nil {
+			fmt.Printf("Hmm... Lore couldn't find %s. Here's the error: \n", flagArg)
+			return err
+		}
+
+		updatedPlace, err := editPlace(s, place)
+		if err != nil {
+			return err
+		}
+
+		printPlace(updatedPlace)
 		return nil
 	case "-d":
 		fmt.Println("Add `delete` fn!")
@@ -158,6 +169,23 @@ func addPlace(s *State, typeFlag string) (db.Place, error) {
 		return newLocation, nil
 	default:
 		return nil, fmt.Errorf("%s is not a valid typeflag", typeFlag)
+	}
+}
+
+func editPlace(s *State, place db.Place) (db.Place, error) {
+	switch place.(type) {
+	case *db.World:
+		world := *place.(*db.World)
+		world = worldForm(world)
+		updatedWorld, err := s.Db.UpdateWorldById(context.Background(), world)
+		if err != nil {
+			return nil, err
+		}
+
+		return updatedWorld, nil
+	default:
+		fmt.Println("Uh oh, cannot edit this place.")
+		return nil, fmt.Errorf("Non editable place type: %T", place)
 	}
 }
 
