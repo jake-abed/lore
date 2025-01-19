@@ -13,6 +13,7 @@ import (
 func commandPlaces(s *State) error {
 	args := s.Args[1:]
 
+	// Break out if user did not provide enough flags.
 	if len(args) < 2 {
 		return fmt.Errorf("Places command requires at least two arguments!")
 	}
@@ -27,6 +28,10 @@ func commandPlaces(s *State) error {
 
 	flag, flagArg := parseFlagArg(args)
 
+	/* If the user is not searching, they have to have provided a type Flag
+	somewhere in the arg list. If not, break out and error. If they are searching
+	run the search functionality which will look up all places!
+	*/
 	if flag != "-s" && typeFlag == "" {
 		return fmt.Errorf("Flag %s requires a place type flag as well.", flag)
 	} else if flag == "-s" && flagArg != "" {
@@ -74,6 +79,9 @@ func printPlace(p db.Place) {
 	case *db.Area:
 		area := p.(*db.Area)
 		printArea(area)
+	case *db.Location:
+		location := p.(*db.Location)
+		printLocation(location)
 	default:
 		fmt.Println(p)
 		fmt.Printf("Lore has no such place type as %T\n", p)
@@ -94,6 +102,17 @@ func printArea(a *db.Area) {
 	fmt.Println(bold.Render("Belongs to World Id: ") +
 		fmt.Sprintf("%d", a.WorldId))
 }
+
+func printLocation(l *db.Location) {
+	headerMsg := fmt.Sprintf("Location: %-16s Id: %-2d", l.Name, l.Id)
+	printHeader(headerMsg)
+	fmt.Println(bold.Render("Area Type: ") + l.Type)
+	fmt.Println(bold.Render("Description: ") + l.Desc)
+	fmt.Println(bold.Render("Belongs to Area Id: ") +
+		fmt.Sprintf("%d", l.AreaId))
+}
+
+/// Add Place Helper Function
 
 func addPlace(s *State, typeFlag string) (db.Place, error) {
 	switch typeFlag {
@@ -121,7 +140,22 @@ func addPlace(s *State, typeFlag string) (db.Place, error) {
 			return &db.Area{}, err
 		}
 
-		return newArea, err
+		return newArea, nil
+	case "--location":
+		location := locationForm(s, db.Location{})
+		locationParams := &db.LocationParams{
+			Name:   location.Name,
+			Type:   location.Type,
+			Desc:   location.Desc,
+			AreaId: location.AreaId,
+		}
+
+		newLocation, err := s.Db.AddLocation(context.Background(), locationParams)
+		if err != nil {
+			return &db.Location{}, err
+		}
+
+		return newLocation, nil
 	default:
 		return nil, fmt.Errorf("%s is not a valid typeflag", typeFlag)
 	}
@@ -141,6 +175,12 @@ func getPlaceByName(s *State, typeFlag string, arg string) (db.Place, error) {
 			return nil, err
 		}
 		return area, nil
+	case "--location":
+		location, err := s.Db.GetLocationByName(context.Background(), arg)
+		if err != nil {
+			return nil, err
+		}
+		return location, nil
 	default:
 		return nil, nil
 	}
@@ -201,7 +241,11 @@ func locationForm(s *State, location db.Location) db.Location {
 		newPlaceSelectGroup(worlds, location.Name, &worldId),
 	).WithTheme(huh.ThemeBase16()).Run()
 
-	areas, _ := s.Db.GetXAreas(context.Background(), worldId, 10, 0)
+	areas, err := s.Db.GetXAreas(context.Background(), worldId, 10, 0)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
 	huh.NewForm(
 		newPlaceSelectGroup(areas, location.Name, &location.AreaId),
@@ -246,7 +290,8 @@ func newPlaceSelectGroup(places interface{}, name string, val *int) *huh.Group {
 // Flag helper functions
 
 func isPlaceTypeFlag(flag string) bool {
-	return flag == "--world" || flag == "--area" || flag == "-location"
+	return flag == "--world" || flag == "--area" || flag == "--location" ||
+		flag == "--sublocation"
 }
 
 func isCommandFlag(flag string) bool {

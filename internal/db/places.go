@@ -239,7 +239,13 @@ func (q *Queries) GetXAreas(
 
 	for rows.Next() {
 		area := Area{}
-		err := rows.Scan(&area.Id, &area.Name, &area.Desc)
+		err := rows.Scan(
+			&area.Id,
+			&area.Name,
+			&area.Type,
+			&area.Desc,
+			&area.WorldId,
+		)
 		if err != nil {
 			return nil, err
 		}
