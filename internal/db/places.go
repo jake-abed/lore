@@ -239,6 +239,39 @@ func (q *Queries) GetAreaByName(
 	return &area, nil
 }
 
+const updateAreaByIdQuery = `UPDATE areas 
+	SET name = $1, type = $2, description = $3, world_id = $4 WHERE id = $5
+	RETURNING *
+`
+
+func (q *Queries) UpdateAreaById(
+	ctx context.Context,
+	area Area,
+) (*Area, error) {
+	updatedArea := Area{}
+	row := q.Db.QueryRowContext(
+		ctx,
+		updateAreaByIdQuery,
+		area.Name,
+		area.Type,
+		area.Desc,
+		area.WorldId,
+		area.Id,
+	)
+	err := row.Scan(
+		&updatedArea.Id,
+		&updatedArea.Name,
+		&updatedArea.Type,
+		&updatedArea.Desc,
+		&updatedArea.WorldId,
+	)
+	if err != nil {
+		return &Area{}, err
+	}
+
+	return &updatedArea, nil
+}
+
 const getXAreasQuery = `
 SELECT * FROM areas WHERE areas.world_id LIKE $1
 	ORDER BY areas.id ASC LIMIT $2 OFFSET $3
@@ -342,6 +375,39 @@ func (q *Queries) GetLocationByName(
 	}
 
 	return &location, nil
+}
+
+const updateLocationByIdQuery = `UPDATE locations
+	SET name = $1, type = $2, description = $3, area_id = $4 WHERE id = $5
+	RETURNING *
+`
+
+func (q *Queries) UpdateLocationById(
+	ctx context.Context,
+	location Location,
+) (*Location, error) {
+	updatedLocation := Location{}
+	row := q.Db.QueryRowContext(
+		ctx,
+		updateLocationByIdQuery,
+		location.Name,
+		location.Type,
+		location.Desc,
+		location.AreaId,
+		location.Id,
+	)
+	err := row.Scan(
+		&updatedLocation.Id,
+		&updatedLocation.Name,
+		&updatedLocation.Type,
+		&updatedLocation.Desc,
+		&updatedLocation.AreaId,
+	)
+	if err != nil {
+		return &Location{}, err
+	}
+
+	return &updatedLocation, nil
 }
 
 const getXLocationsQuery = `

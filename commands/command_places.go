@@ -128,7 +128,17 @@ func printLocation(l *db.Location) {
 func addPlace(s *State, typeFlag string) (db.Place, error) {
 	switch typeFlag {
 	case "--world":
-		world := worldForm(db.World{})
+		world, err := worldForm(db.World{})
+		if err != nil {
+			if err.Error() == "user aborted" {
+				fmt.Println("User exited early!")
+				os.Exit(0)
+			}
+			return &db.World{}, err
+		}
+		if world.Name == "" || world.Desc == "" {
+			return &db.World{}, fmt.Errorf("World not added.")
+		}
 		worldParams := db.WorldParams{Name: world.Name, Desc: world.Desc}
 
 		newWorld, err := s.Db.AddWorld(context.Background(), &worldParams)
@@ -176,13 +186,39 @@ func editPlace(s *State, place db.Place) (db.Place, error) {
 	switch place.(type) {
 	case *db.World:
 		world := *place.(*db.World)
-		world = worldForm(world)
+		world, err := worldForm(world)
+		if err != nil {
+			return nil, err
+		}
+
 		updatedWorld, err := s.Db.UpdateWorldById(context.Background(), world)
 		if err != nil {
 			return nil, err
 		}
 
 		return updatedWorld, nil
+	case *db.Area:
+		area := *place.(*db.Area)
+		area = areaForm(s, area)
+
+		updatedArea, err := s.Db.UpdateAreaById(context.Background(), area)
+		if err != nil {
+			return nil, err
+		}
+
+		return updatedArea, nil
+	case *db.Location:
+		location := *place.(*db.Location)
+		location = locationForm(s, location)
+
+		updatedLocation, err := s.Db.UpdateLocationById(context.Background(),
+			location,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		return updatedLocation, err
 	default:
 		fmt.Println("Uh oh, cannot edit this place.")
 		return nil, fmt.Errorf("Non editable place type: %T", place)
@@ -216,8 +252,8 @@ func getPlaceByName(s *State, typeFlag string, arg string) (db.Place, error) {
 
 // Form Functions
 
-func worldForm(world db.World) db.World {
-	huh.NewForm(
+func worldForm(world db.World) (db.World, error) {
+	form := huh.NewForm(
 		huh.NewGroup(
 			huh.NewInput().
 				Title("World Name: ").
@@ -226,9 +262,14 @@ func worldForm(world db.World) db.World {
 				Title("World Description: ").
 				Value(&world.Desc),
 		),
-	).WithTheme(huh.ThemeBase16()).Run()
+	).WithTheme(huh.ThemeBase16())
 
-	return world
+	err := form.Run()
+	if err != nil {
+		return db.World{}, err
+	}
+
+	return world, nil
 }
 
 func areaForm(s *State, area db.Area) db.Area {
