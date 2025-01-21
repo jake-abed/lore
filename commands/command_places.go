@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"strings"
 	"strconv"
+	"strings"
 
 	"github.com/charmbracelet/huh"
 	"github.com/jake-abed/lore/internal/db"
@@ -72,7 +72,7 @@ func commandPlaces(s *State) error {
 		printPlace(updatedPlace)
 		return nil
 	case "-d":
-		id , err := strconv.ParseInt(flagArg, 10, 64)
+		id, err := strconv.ParseInt(flagArg, 10, 64)
 		if err != nil {
 			fmt.Println("Implement delete by name")
 		}
