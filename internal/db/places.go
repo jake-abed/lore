@@ -143,6 +143,17 @@ func (q *Queries) UpdateWorldById(
 	return &updatedWorld, nil
 }
 
+const deleteWorldByIdQuery = `DELETE FROM worlds where id = $1`
+
+func (q *Queries) DeleteWorldByIdQuery(ctx context.Context, id int) error {
+	_, err := q.Db.ExecContext(ctx, deleteWorldByIdQuery, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 const getXWorldsQuery = `
 SELECT * FROM worlds ORDER BY worlds.id ASC LIMIT $1 OFFSET $2
 `

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"strconv"
 
 	"github.com/charmbracelet/huh"
 	"github.com/jake-abed/lore/internal/db"
@@ -71,7 +72,15 @@ func commandPlaces(s *State) error {
 		printPlace(updatedPlace)
 		return nil
 	case "-d":
-		fmt.Println("Add `delete` fn!")
+		id , err := strconv.ParseInt(flagArg, 10, 64)
+		if err != nil {
+			fmt.Println("Implement delete by name")
+		}
+		err = deletePlaceById(s, typeFlag, int(id))
+		if err != nil {
+			return err
+		}
+
 		return nil
 	default:
 		msg := fmt.Sprintf("Uh oh! You used an invalid flag or wrote your command wrong!")
@@ -280,6 +289,16 @@ func getPlaceByName(s *State, typeFlag string, arg string) (db.Place, error) {
 	}
 }
 
+func deletePlaceById(s *State, placeType string, id int) error {
+	switch placeType {
+	case "--world":
+		err := s.Db.DeleteWorldByIdQuery(context.Background(), id)
+		return err
+	default:
+		return fmt.Errorf("Place type not recognized, could not delete.")
+	}
+}
+
 // Form Functions
 
 func worldForm(world db.World) (db.World, error) {
@@ -305,7 +324,7 @@ func worldForm(world db.World) (db.World, error) {
 func areaForm(s *State, area db.Area) (db.Area, error) {
 	worlds, _ := s.Db.GetXWorlds(context.Background(), 10, 0)
 	form := huh.NewForm(
-		newPlaceSelectGroup(worlds, &area.WorldId),
+		newPlaceSelectGroup(worlds, area.Name, &area.WorldId),
 		huh.NewGroup(
 			huh.NewInput().
 				Title("Area Name: ").
@@ -331,7 +350,7 @@ func locationForm(s *State, location db.Location) (db.Location, error) {
 	worlds, _ := s.Db.GetXWorlds(context.Background(), 10, 0)
 	var worldId int
 	worldForm := huh.NewForm(
-		newPlaceSelectGroup(worlds, &worldId),
+		newPlaceSelectGroup(worlds, location.Name, &worldId),
 	).WithTheme(huh.ThemeBase16())
 
 	err := worldForm.Run()
@@ -346,7 +365,7 @@ func locationForm(s *State, location db.Location) (db.Location, error) {
 	}
 
 	areaForm := huh.NewForm(
-		newPlaceSelectGroup(areas, &location.AreaId),
+		newPlaceSelectGroup(areas, location.Name, &location.AreaId),
 	).WithTheme(huh.ThemeBase16())
 
 	err = areaForm.Run()
@@ -376,7 +395,15 @@ func locationForm(s *State, location db.Location) (db.Location, error) {
 	return location, nil
 }
 
-func newPlaceSelectGroup(places interface{}, val *int) *huh.Group {
+func newPlaceSelectGroup(
+	places interface{},
+	placeName string,
+	val *int,
+) *huh.Group {
+	if placeName == "" {
+		placeName = "this place"
+	}
+
 	options := []huh.Option[int]{}
 	var placeType db.PlaceType
 
@@ -405,7 +432,7 @@ func newPlaceSelectGroup(places interface{}, val *int) *huh.Group {
 
 	return huh.NewGroup(
 		huh.NewSelect[int]().
-			Title(fmt.Sprintf("Which %s will this place belong to?", placeType)).
+			Title(fmt.Sprintf("Which %s will %s belong to?", placeType, placeName)).
 			Options(options...).
 			Value(val),
 	)
