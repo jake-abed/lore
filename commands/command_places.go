@@ -131,7 +131,7 @@ func addPlace(s *State, typeFlag string) (db.Place, error) {
 		world, err := worldForm(db.World{})
 		if err != nil {
 			if err.Error() == "user aborted" {
-				fmt.Println("User exited early!")
+				fmt.Println("User exited Lore form early!")
 				os.Exit(0)
 			}
 			return &db.World{}, err
@@ -143,12 +143,24 @@ func addPlace(s *State, typeFlag string) (db.Place, error) {
 
 		newWorld, err := s.Db.AddWorld(context.Background(), &worldParams)
 		if err != nil {
+			if err.Error() == "user aborted" {
+				fmt.Println("User exited Lore form early!")
+				os.Exit(0)
+			}
 			return &db.World{}, err
 		}
 
 		return newWorld, nil
 	case "--area":
-		area := areaForm(s, db.Area{})
+		area, err := areaForm(s, db.Area{})
+		if err != nil {
+			if err.Error() == "user aborted" {
+				fmt.Println("User exited Lore form early!")
+				os.Exit(0)
+			}
+			return &db.Area{}, err
+		}
+
 		areaParams := &db.AreaParams{
 			Name:    area.Name,
 			Type:    area.Type,
@@ -199,7 +211,10 @@ func editPlace(s *State, place db.Place) (db.Place, error) {
 		return updatedWorld, nil
 	case *db.Area:
 		area := *place.(*db.Area)
-		area = areaForm(s, area)
+		area, err := areaForm(s, area)
+		if err != nil {
+			return nil, err
+		}
 
 		updatedArea, err := s.Db.UpdateAreaById(context.Background(), area)
 		if err != nil {
@@ -272,9 +287,10 @@ func worldForm(world db.World) (db.World, error) {
 	return world, nil
 }
 
-func areaForm(s *State, area db.Area) db.Area {
+func areaForm(s *State, area db.Area) (db.Area, error) {
 	worlds, _ := s.Db.GetXWorlds(context.Background(), 10, 0)
-	huh.NewForm(
+	form := huh.NewForm(
+		newPlaceSelectGroup(worlds, &area.WorldId),
 		huh.NewGroup(
 			huh.NewInput().
 				Title("Area Name: ").
@@ -286,10 +302,14 @@ func areaForm(s *State, area db.Area) db.Area {
 				Title("Area Description: ").
 				Value(&area.Desc),
 		),
-		newPlaceSelectGroup(worlds, area.Name, &area.WorldId),
-	).WithTheme(huh.ThemeBase16()).Run()
+	).WithTheme(huh.ThemeBase16())
 
-	return area
+	err := form.Run()
+	if err != nil {
+		return db.Area{}, err
+	}
+
+	return area, nil
 }
 
 func locationForm(s *State, location db.Location) db.Location {
@@ -307,7 +327,7 @@ func locationForm(s *State, location db.Location) db.Location {
 				Title("Location Description: ").
 				Value(&location.Desc),
 		),
-		newPlaceSelectGroup(worlds, location.Name, &worldId),
+		newPlaceSelectGroup(worlds, &worldId),
 	).WithTheme(huh.ThemeBase16()).Run()
 
 	areas, err := s.Db.GetXAreas(context.Background(), worldId, 10, 0)
@@ -317,20 +337,22 @@ func locationForm(s *State, location db.Location) db.Location {
 	}
 
 	huh.NewForm(
-		newPlaceSelectGroup(areas, location.Name, &location.AreaId),
+		newPlaceSelectGroup(areas, &location.AreaId),
 	).WithTheme(huh.ThemeBase16()).Run()
 
 	return location
 }
 
-func newPlaceSelectGroup(places interface{}, name string, val *int) *huh.Group {
+func newPlaceSelectGroup(places interface{}, val *int) *huh.Group {
 	options := []huh.Option[int]{}
+	var placeType db.PlaceType
 
 	switch places.(type) {
 	case []*db.World:
 		worlds := places.([]*db.World)
 		for _, world := range worlds {
 			id, name := world.Inspect()
+			placeType = world.PlaceType()
 			option := huh.NewOption(fmt.Sprintf("%d - %s", id, name), id)
 
 			options = append(options, option)
@@ -350,7 +372,7 @@ func newPlaceSelectGroup(places interface{}, name string, val *int) *huh.Group {
 
 	return huh.NewGroup(
 		huh.NewSelect[int]().
-			Title(fmt.Sprintf("Which place does %s belong to?", name)).
+			Title(fmt.Sprintf("Which %s will this place belong to?", placeType)).
 			Options(options...).
 			Value(val),
 	)
