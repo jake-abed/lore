@@ -175,7 +175,15 @@ func addPlace(s *State, typeFlag string) (db.Place, error) {
 
 		return newArea, nil
 	case "--location":
-		location := locationForm(s, db.Location{})
+		location, err := locationForm(s, db.Location{})
+		if err != nil {
+			if err.Error() == "user aborted" {
+				fmt.Println("User exited Lore form early!")
+				os.Exit(0)
+			}
+			return nil, err
+		}
+
 		locationParams := &db.LocationParams{
 			Name:   location.Name,
 			Type:   location.Type,
@@ -224,7 +232,14 @@ func editPlace(s *State, place db.Place) (db.Place, error) {
 		return updatedArea, nil
 	case *db.Location:
 		location := *place.(*db.Location)
-		location = locationForm(s, location)
+		location, err := locationForm(s, location)
+		if err != nil {
+			if err.Error() == "user aborted" {
+				fmt.Println("User exited Lore form early!")
+				os.Exit(0)
+			}
+			return nil, err
+		}
 
 		updatedLocation, err := s.Db.UpdateLocationById(context.Background(),
 			location,
@@ -312,10 +327,34 @@ func areaForm(s *State, area db.Area) (db.Area, error) {
 	return area, nil
 }
 
-func locationForm(s *State, location db.Location) db.Location {
+func locationForm(s *State, location db.Location) (db.Location, error) {
 	worlds, _ := s.Db.GetXWorlds(context.Background(), 10, 0)
 	var worldId int
-	huh.NewForm(
+	worldForm := huh.NewForm(
+		newPlaceSelectGroup(worlds, &worldId),
+	).WithTheme(huh.ThemeBase16())
+
+	err := worldForm.Run()
+	if err != nil {
+		return db.Location{}, err
+	}
+
+	areas, err := s.Db.GetXAreas(context.Background(), worldId, 10, 0)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	areaForm := huh.NewForm(
+		newPlaceSelectGroup(areas, &location.AreaId),
+	).WithTheme(huh.ThemeBase16())
+
+	err = areaForm.Run()
+	if err != nil {
+		return db.Location{}, err
+	}
+
+	mainForm := huh.NewForm(
 		huh.NewGroup(
 			huh.NewInput().
 				Title("Location Name: ").
@@ -327,20 +366,14 @@ func locationForm(s *State, location db.Location) db.Location {
 				Title("Location Description: ").
 				Value(&location.Desc),
 		),
-		newPlaceSelectGroup(worlds, &worldId),
-	).WithTheme(huh.ThemeBase16()).Run()
+	).WithTheme(huh.ThemeBase16())
 
-	areas, err := s.Db.GetXAreas(context.Background(), worldId, 10, 0)
+	err = mainForm.Run()
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return db.Location{}, err
 	}
 
-	huh.NewForm(
-		newPlaceSelectGroup(areas, &location.AreaId),
-	).WithTheme(huh.ThemeBase16()).Run()
-
-	return location
+	return location, nil
 }
 
 func newPlaceSelectGroup(places interface{}, val *int) *huh.Group {
