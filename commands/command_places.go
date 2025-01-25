@@ -38,7 +38,11 @@ func commandPlaces(s *State) error {
 	if flag != "-s" && typeFlag == "" {
 		return fmt.Errorf("Flag %s requires a place type flag as well.", flag)
 	} else if flag == "-s" && flagArg != "" {
-		fmt.Println("Add `search fn!")
+		searchTerm := "%" + strings.ToLower(flagArg) + "%"
+		err := searchPlaceByName(s, typeFlag, searchTerm)
+		if err != nil {
+			return err
+		}
 		return nil
 	}
 
@@ -288,6 +292,28 @@ func getPlaceByName(s *State, typeFlag string, arg string) (db.Place, error) {
 		return location, nil
 	default:
 		return nil, nil
+	}
+}
+
+func searchPlaceByName(s *State, placeType string, name string) error {
+	switch placeType {
+	case "--world":
+		worlds, err := s.Db.SearchWorldsByName(
+			context.Background(),
+			db.SearchParams{Name: name, Limit: 20, Offset: 0},
+		)
+		if err != nil {
+			return err
+		}
+
+		for _, world := range worlds {
+			id, worldName := world.Inspect()
+			fmt.Printf("World Id: %d | World Name: %s\n", id, worldName)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("%s not recognized when searching.", placeType)
 	}
 }
 
