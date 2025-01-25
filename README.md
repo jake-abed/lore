@@ -36,30 +36,35 @@ go install github.com/jake-abed/lore
 
 ## Commands
 
-> **help** lists all available commands
+### **help**
+Lists all available commands
 
-> **monsters**
-> - **-i <monster name or id>**    | Get basic information about a monster from the D&D 5e API.
-> - **-f <monster-1> <monster-2>** | Simulate a turn-based fight between two monsters.
-> - - Slightly skewed as it does not factor movement or flying into the battles, so extremely agile or flying monsters will have less of an edge than they normal would.
+### **monsters**
+- **-i <monster name or id>**    | Get basic information about a monster from the D&D 5e API.
+- **-f <monster-1> <monster-2>** | Simulate a turn-based fight between two monsters.
+- - Slightly skewed as it does not factor movement or flying into the battles, so extremely agile or flying monsters will have less of an edge than they normal would.
 
-> **npcs** View, search, edit, and create custom NPCs for your campaign.
-> - **-a**        | Add new NPC via form!
-> - **-v <name>** | View an NPC with the provided name (exact match).
-> - **-s <name>** | Lists all NPCs that partially match the provided name.
-> - **-e <name>** | Edit an NPC with the provided name (exact match).
+### **npcs**
+View, search, edit, and create custom NPCs for your campaign.
 
-> **places** View, search, edit, and create custom places for your campaign.
-> - **<place-flag> -a**         | Add a new NPC via form!
-> - **<place-flag> -d** <id>    | Delete a place by ID represented as an integer.
-> - **<place-flag > -v <name>** | View an NPC with the provided name (exact match).
-> - **<place-flag> -s <name>**  | Lists all NPCs that partially match the provided name.
-> - **<place-flag> -e <name>**  | Edit an NPC with the provided name (exact match).
-> Uses 'place flags' to mark which place type you are operating on.
-> - --world       | Overaching world for a campaign.
-> - --area        | Areas or regions of a world.
-> - --location    | Locations contained within areas.
-> - --sublocation | Not implemented! Not sure if necessary or overkill?
+- **-a**        | Add new NPC via form!
+- **-v <name>** | View an NPC with the provided name (exact match).
+- **-s <name>** | Lists all NPCs that partially match the provided name.
+- **-e <name>** | Edit an NPC with the provided name (exact match).
+
+### **places**
+View, search, edit, and create custom places for your campaign.
+- **<place-flag> -a**         | Add a new place via form!
+- **<place-flag> -d** <id>    | Delete a place by ID represented as an integer.
+- **<place-flag > -v <name>** | View a place with the provided name (exact match).
+- **<place-flag> -s <name>**  | Lists all places that partially match the provided name.
+- **<place-flag> -e <name>**  | Edit a place with the provided name (exact match).
+
+#### Uses 'place flags' to mark which place type you are operating on.
+- --world       | Overaching world for a campaign.
+- --area        | Areas or regions of a world.
+- --location    | Locations contained within areas.
+- --sublocation | Not implemented! Not sure if necessary or overkill?
 
 ## Contributing
 
