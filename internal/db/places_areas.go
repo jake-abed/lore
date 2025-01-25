@@ -159,3 +159,14 @@ func (q *Queries) GetXAreas(
 
 	return areas, nil
 }
+
+const deleteAreaByIdQuery = `DELETE FROM areas where id = $1`
+
+func (q *Queries) DeleteAreaByIdQuery(ctx context.Context, id int) error {
+	_, err := q.Db.ExecContext(ctx, deleteAreaByIdQuery, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

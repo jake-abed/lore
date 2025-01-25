@@ -312,6 +312,36 @@ func searchPlaceByName(s *State, placeType string, name string) error {
 		}
 
 		return nil
+	case "--area":
+		areas, err := s.Db.SearchAreasByName(
+			context.Background(),
+			db.SearchParams{Name: name, Limit: 20, Offset: 0},
+		)
+		if err != nil {
+			return err
+		}
+
+		for _, area := range areas {
+			id, areaName := area.Inspect()
+			fmt.Printf("Area Id: %d | Area Name: %s\n", id, areaName)
+		}
+
+		return nil
+	case "--location":
+		locations, err := s.Db.SearchLocationsByName(
+			context.Background(),
+			db.SearchParams{Name: name, Limit: 20, Offset: 0},
+		)
+		if err != nil {
+			return err
+		}
+
+		for _, location := range locations {
+			id, locationName := location.Inspect()
+			fmt.Printf("Location Id: %d | Location Name: %s\n", id, locationName)
+		}
+
+		return nil
 	default:
 		return fmt.Errorf("%s not recognized when searching.", placeType)
 	}
@@ -320,7 +350,28 @@ func searchPlaceByName(s *State, placeType string, name string) error {
 func deletePlaceById(s *State, placeType string, id int) error {
 	switch placeType {
 	case "--world":
-		err := s.Db.DeleteWorldByIdQuery(context.Background(), id)
+		msg := fmt.Sprintf("delete World ID '%d'", id)
+		cont, err := confirmForm(msg)
+		if !cont {
+			return nil
+		}
+		err = s.Db.DeleteWorldByIdQuery(context.Background(), id)
+		return err
+	case "--area":
+		msg := fmt.Sprintf("delete Area ID '%d'", id)
+		cont, err := confirmForm(msg)
+		if !cont {
+			return nil
+		}
+		err = s.Db.DeleteAreaByIdQuery(context.Background(), id)
+		return err
+	case "--location":
+		msg := fmt.Sprintf("delete Location ID '%d'", id)
+		cont, err := confirmForm(msg)
+		if !cont {
+			return nil
+		}
+		err = s.Db.DeleteLocationByIdQuery(context.Background(), id)
 		return err
 	default:
 		return fmt.Errorf("Place type not recognized, could not delete.")
@@ -464,6 +515,25 @@ func newPlaceSelectGroup(
 			Options(options...).
 			Value(val),
 	)
+}
+
+func confirmForm(msg string) (bool, error) {
+	var cont bool
+
+	form := huh.NewForm(
+		huh.NewGroup(
+			huh.NewConfirm().
+				Value(&cont).
+				Title("Are you sure you would like to " + msg + "?"),
+		),
+	)
+
+	err := form.Run()
+	if err != nil {
+		return false, err
+	}
+
+	return cont, nil
 }
 
 // Flag helper functions

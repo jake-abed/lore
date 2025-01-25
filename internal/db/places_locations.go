@@ -150,3 +150,14 @@ func (q *Queries) GetXLocations(
 
 	return locations, nil
 }
+
+const deleteLocationByIdQuery = `DELETE FROM locations WHERE id = $1`
+
+func (q *Queries) DeleteLocationByIdQuery(ctx context.Context, id int) error {
+	_, err := q.Db.ExecContext(ctx, deleteLocationByIdQuery, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
