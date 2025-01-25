@@ -3,12 +3,17 @@ package db
 import (
 	"context"
 	"database/sql"
+	"embed"
 	"fmt"
+	"os"
+
 	"github.com/jake-abed/lore/internal/config"
 	"github.com/pressly/goose/v3"
 	_ "modernc.org/sqlite"
-	"os"
 )
+
+//go:embed sql/*.sql
+var embedSQL embed.FS
 
 type DBTX interface {
 	ExecContext(context.Context, string, ...interface{}) (sql.Result, error)
@@ -50,6 +55,8 @@ func OpenDb(cfg *config.Config) (*sql.DB, error) {
 		}
 	}
 
+	goose.SetBaseFS(embedSQL)
+
 	db, err := goose.OpenDBWithDriver("sqlite", homeDir+dbPath)
 	if err != nil {
 		fmt.Println("Goose had an issue opening the db!")
@@ -57,13 +64,23 @@ func OpenDb(cfg *config.Config) (*sql.DB, error) {
 		return nil, err
 	}
 
+	if err := goose.SetDialect("sqlite"); err != nil {
+		panic(err)
+	}
+
+	if err := goose.Up(db, "sql"); err != nil {
+		panic(err)
+	}
+
 	goose.SetLogger(goose.NopLogger())
 
-	err = goose.Up(db, "./sql")
-	if err != nil {
-		fmt.Println("Goose had an error!")
-		fmt.Println(err)
-	}
+	/*
+		err = goose.Up(db, "./sql")
+		if err != nil {
+			fmt.Println("Goose had an error!")
+			fmt.Println(err)
+		}
+	*/
 
 	return db, nil
 }
