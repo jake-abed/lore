@@ -16,7 +16,9 @@ func commandPlaces(s *State) error {
 
 	// Break out if user did not provide enough flags.
 	if len(args) < 2 {
-		return fmt.Errorf("Places command requires at least two arguments!")
+		fmt.Println("Places command requires at least two arguments!")
+		placesHelp()
+		return nil
 	}
 
 	var typeFlag string
@@ -74,7 +76,7 @@ func commandPlaces(s *State) error {
 	case "-d":
 		id, err := strconv.ParseInt(flagArg, 10, 64)
 		if err != nil {
-			fmt.Println("Implement delete by name")
+			return fmt.Errorf("Cannot delete by name. Must delete by ID (integer).")
 		}
 		err = deletePlaceById(s, typeFlag, int(id))
 		if err != nil {
@@ -460,4 +462,30 @@ func parseFlagArg(args []string) (string, string) {
 	}
 
 	return "", ""
+}
+
+// Places Help Command
+
+func placesHelp() {
+	intro := "Lore Places Help\n"
+	introTip := "Places subcommand information"
+	fmt.Println(header.Render(intro + introTip))
+	placeFlagIntro := bold.Render("Place Flags: ")
+	placeFlags := "--world, --area, --location, --sublocation"
+	fmt.Println(placeFlagIntro + placeFlags)
+	add := bold.Render("  *** places <place flag> -a | ")
+	addMessage := "Add a new place. Must specifiy place flag."
+	fmt.Println(add + addMessage)
+	edit := bold.Render("  *** places <place flag> -e <name> | ")
+	editMessage := "Edit a place by name. Must specify place flag."
+	fmt.Println(edit + editMessage)
+	view := bold.Render("  *** places <place flag> -v <name> | ")
+	viewMessage := "View a place by name (case-insensitive)."
+	fmt.Println(view + viewMessage)
+	delete := bold.Render("  *** places <place flag> -d <id> | ")
+	deleteMessage := "Delete a place by ID."
+	fmt.Println(delete + deleteMessage)
+	search := bold.Render("  *** places -s <name> | ")
+	searchMessage := "Searches the DB by place name returning all results.\n"
+	fmt.Println(search + searchMessage)
 }
