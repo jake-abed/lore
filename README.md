@@ -66,6 +66,29 @@ View, search, edit, and create custom places for your campaign.
 - --location    | Locations contained within areas.
 - --sublocation | Not implemented! Not sure if necessary or overkill?
 
+## Roadmap
+
+While not set in stone, hitting a true v1.0.0 will include:
+- [ ] Dice Rolls
+- - `lore dice <dice-arg>` allowing for dynamic dice rolls!
+- - - For example `lore dice 2d6+1` rolls two six-sided die and adds one!
+- [ ] Quests
+- - Write quests and attach places and NPCs to them.
+- [ ] History/Events
+- - The final shape isn't decided, but historical events can be important.
+- [ ] Players
+- - Store info about your player's characters.
+- [ ] Encounters
+- - Write encounters and then serve them up randomly to the GM.
+
+I'm also debating adding a custom monsters section or replacing the API with custom monsters. The catch here is that monsters are... complex and require significantly more work to customize. They also require knowledge of the game system being used. Lore is supposed to be game system agnostic for custom info. So, feedback would be nice here.
+
+### NB on Compatibility
+
+Up until v1.0.0 Lore should be considered unstable. The shape of the DB is a work in progress and I cannot promise compatibility.
+
+Starting at v1.0.0, the DB schema will be stable and non-breaking changes only will happen.
+
 ## Contributing
 
 Want to contribute to Lore at all?
