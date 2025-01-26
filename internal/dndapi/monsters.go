@@ -174,6 +174,19 @@ func parseDamageDice(attackDie string) (
 			fmt.Println(err)
 			return
 		}
+	} else if strings.Contains(dieSizeStr, "-") {
+		splitAtMinus := strings.Split(dieSizeStr, "-")
+		damageDice, err = strconv.ParseInt(splitAtMinus[0], 10, 32)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		bonus, err = strconv.ParseInt(splitAtMinus[1], 10, 32)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		bonus *= int64(-1)
 	} else {
 		damageDice, err = strconv.ParseInt(splitAtD[1], 10, 32)
 		if err != nil {
