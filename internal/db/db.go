@@ -68,19 +68,11 @@ func OpenDb(cfg *config.Config) (*sql.DB, error) {
 		panic(err)
 	}
 
+	goose.SetLogger(goose.NopLogger())
+
 	if err := goose.Up(db, "sql"); err != nil {
 		panic(err)
 	}
-
-	goose.SetLogger(goose.NopLogger())
-
-	/*
-		err = goose.Up(db, "./sql")
-		if err != nil {
-			fmt.Println("Goose had an error!")
-			fmt.Println(err)
-		}
-	*/
 
 	return db, nil
 }

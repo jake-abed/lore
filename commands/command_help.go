@@ -43,6 +43,11 @@ func SingleCommandHelp(
 	if !ok {
 		return fmt.Errorf("That command does not exist in Lore!")
 	}
+
+	if cmd.Name == "help" {
+		commandDiv += "The help subcommand helps you. It's helping right now!"
+	}
+
 	for key, val := range cmd.Flags {
 		name := bold.Render(fmt.Sprintf("%-13s", key))
 		desc := italic.Render(val)
