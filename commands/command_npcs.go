@@ -73,16 +73,16 @@ func npcHelp() {
 	intro := "Lore Npc Help\n"
 	introTip := "NPCs subcommand information"
 	fmt.Println(header.Render(intro + introTip))
-	add := bold.Render("  *** npc -a | ")
+	add := bold.Render("  *** npcs -a | ")
 	addMessage := "Add a new npc by name."
 	fmt.Println(add + addMessage)
-	edit := bold.Render("  *** npc -e <npc-name> | ")
+	edit := bold.Render("  *** npcs -e <npc-name> | ")
 	editMessage := "Edit an NPC by name."
 	fmt.Println(edit + editMessage)
-	search := bold.Render("  *** npc -s <npc-name> | ")
+	search := bold.Render("  *** npcs -s <npc-name> | ")
 	searchMessage := "Searches the DB by NPC name returning all results."
 	fmt.Println(search + searchMessage)
-	view := bold.Render("  *** npc -s <npc-name> | ")
+	view := bold.Render("  *** npcs -s <npc-name> | ")
 	viewMessage := "View an NPC by name (case-insensitive).\n"
 	fmt.Println(view + viewMessage)
 }
