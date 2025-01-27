@@ -137,7 +137,7 @@ func UseRandomAttack(attacks []*Attack) *AttackDamage {
 		attackDamage := &AttackDamage{
 			Name:        attack.Name,
 			Type:        damage.DamageType.Name,
-			Damage:      dice.RollDamage(damage.DamageDice),
+			Damage:      dice.SumRollDice(damage.DamageDice),
 			AttackBonus: attack.AttackBonus,
 		}
 		damages = append(damages, attackDamage)

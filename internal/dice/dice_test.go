@@ -15,7 +15,7 @@ func TestRollDamage(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		damage := RollDamage(tt.Input)
+		damage := SumRollDice(tt.Input)
 		if damage < tt.Expected[0] || damage > tt.Expected[1] {
 			t.Errorf("Roll outside of range! Got=%d, expected between %d-%d",
 				damage, tt.Expected[0], tt.Expected[1])

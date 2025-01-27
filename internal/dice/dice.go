@@ -13,12 +13,21 @@ unavoidable? Part of the ugliness comes from having to handle all the int64
 to int conversions.
 */
 
-func ParseRoll(roll string) (
+/*
+ParseDiceExpression takes a string diceExpression, and parses 3 strings from
+it! The number of dice being rolled {X}, the value of the dice being rolled {Y},
+and the modifier being applied to the roll {Z}.
+An input dice roll should look like one of the following:
+- XdY: roll X dice of Y value.
+- XdY+Z: roll X dice of Y value adding Z.
+- XdY-Z: roll X dice of Y value subtracting Z.
+*/
+func ParseDiceExpression(diceExpression string) (
 	numDice int64,
 	damageDice int64,
 	bonus int64,
 ) {
-	splitAtD := strings.Split(roll, "d")
+	splitAtD := strings.Split(diceExpression, "d")
 	numDice, err := strconv.ParseInt(splitAtD[0], 10, 32)
 	if err != nil {
 		fmt.Println(err)
@@ -60,8 +69,8 @@ func ParseRoll(roll string) (
 	return
 }
 
-func RollDamage(attackDie string) int {
-	numDice, dieSize, bonus := ParseRoll(attackDie)
+func SumRollDice(diceExpression string) int {
+	numDice, dieSize, bonus := ParseDiceExpression(diceExpression)
 	var damageSum int64
 	for numDice > 0 {
 		damageSum += int64(rand.IntN(int(dieSize)-1) + 1)
