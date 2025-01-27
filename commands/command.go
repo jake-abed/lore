@@ -28,7 +28,7 @@ func BuildCommands() map[string]Command {
 		},
 		"dice": {
 			Name:        "dice",
-			Description: "Roll dice in the following format: {qtyDice}d{Die}{+/}{modifier}.",
+			Description: "Roll dice in the following format: {qtyDice}d{Die}{+/-}{modifier}.",
 			Flags: map[string]string{
 				"-a":       "Rolls all the dice at once and returns the result.",
 				"-i":       "Rolls individual dice, presenting the result, then returning the total.",

@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"time"
+
 	"github.com/jake-abed/lore/commands"
 	"github.com/jake-abed/lore/internal/config"
 	"github.com/jake-abed/lore/internal/db"
 	"github.com/jake-abed/lore/internal/utils"
 	_ "modernc.org/sqlite"
-	"os"
-	"time"
 )
 
 func main() {
@@ -45,7 +46,13 @@ func main() {
 		allCommands["help"].Callback(state)
 	} else {
 		command, ok := allCommands[args[0]]
-		if !ok {
+		if args[0] == "--help" {
+			command = allCommands["help"]
+			err := command.Callback(state)
+			if err != nil {
+				fmt.Println(err)
+			}
+		} else if !ok {
 			msg := fmt.Sprintf("Lore has no %s command!", args[0])
 			fmt.Println(commands.ErrorMsg.Render(msg))
 			time.Sleep(1200 * time.Millisecond)
