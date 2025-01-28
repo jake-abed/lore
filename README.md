@@ -40,8 +40,8 @@ go install github.com/jake-abed/lore
 Lists all available commands
 
 ### **dice**
--- **-a <dice-expression>** | Rolls a dice expression and returns the result summed up.
--- **-i <dice-expression>** | Rolls a dice expression, printing each roll individually, then summing it up.
+- **-a <dice-expression>** | Rolls a dice expression and returns the result summed up.
+- **-i <dice-expression>** | Rolls a dice expression, printing each roll individually, then summing it up.
 #### Examples of Dice Expressions
 > d20, 1d6, 2d12+1, 1d4-1, 3d6+8, 5d20+12, 80d100-50, etc. 
 
