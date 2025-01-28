@@ -3,6 +3,7 @@ package commands
 import (
 	"fmt"
 	"math/rand/v2"
+	"strings"
 
 	"github.com/jake-abed/lore/internal/dice"
 )
@@ -22,13 +23,18 @@ func commandDice(s *State) error {
 		diceExpression = diceArgs[0]
 	} else {
 		flag = diceArgs[0]
-		diceExpression = diceArgs[1]
+		diceExpression = strings.ToLower(diceArgs[1])
+	}
+
+	if !strings.Contains(diceExpression, "d") {
+		return fmt.Errorf("Invalid Dice Expression: %s", diceExpression)
 	}
 
 	switch flag {
 	case "-a":
 		num, dieVal, modifier := dice.ParseDiceExpression(diceExpression)
 		var sum int
+		fmt.Println(dieVal)
 		for range num {
 			sum += rand.IntN(int(dieVal)) + 1
 		}
@@ -37,6 +43,9 @@ func commandDice(s *State) error {
 		fmt.Println(msg, sum+int(modifier))
 	case "-i":
 		num, dieVal, modifier := dice.ParseDiceExpression(diceExpression)
+		if num == 0 {
+			num = 1
+		}
 		var sum int
 		for i := range num {
 			roll := rand.IntN(int(dieVal)) + 1

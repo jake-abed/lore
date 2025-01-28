@@ -27,6 +27,48 @@ func ParseDiceExpression(diceExpression string) (
 	damageDice int64,
 	bonus int64,
 ) {
+	if strings.HasPrefix(diceExpression, "d") {
+		trimmed := strings.ReplaceAll(diceExpression, "d", "")
+		if strings.Contains(trimmed, "+") {
+			splitAtPlus := strings.Split(trimmed, "+")
+			damageDice, err := strconv.ParseInt(splitAtPlus[0], 10, 32)
+			if err != nil {
+				fmt.Println(err)
+				return 0, 0, 0
+			}
+
+			bonus, err := strconv.ParseInt(splitAtPlus[1], 10, 32)
+			if err != nil {
+				fmt.Println(err)
+				return 0, 0, 0
+			}
+
+			return 1, damageDice, bonus
+		} else if strings.Contains(trimmed, "-") {
+			splitAtMinus := strings.Split(trimmed, "-")
+			damageDice, err := strconv.ParseInt(splitAtMinus[0], 10, 32)
+			if err != nil {
+				fmt.Println(err)
+				return 0, 0, 0
+			}
+
+			bonus, err := strconv.ParseInt(splitAtMinus[1], 10, 32)
+			if err != nil {
+				fmt.Println(err)
+				return 0, 0, 0
+			}
+
+			return 1, damageDice, bonus * -1
+		} else {
+			damageDice, err := strconv.ParseInt(trimmed, 10, 32)
+			if err != nil {
+				fmt.Println(err)
+				return 0, 0, 0
+			}
+
+			return 1, damageDice, 0
+		}
+	}
 	splitAtD := strings.Split(diceExpression, "d")
 	numDice, err := strconv.ParseInt(splitAtD[0], 10, 32)
 	if err != nil {
