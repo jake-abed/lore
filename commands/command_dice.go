@@ -34,7 +34,6 @@ func commandDice(s *State) error {
 	case "-a":
 		num, dieVal, modifier := dice.ParseDiceExpression(diceExpression)
 		var sum int
-		fmt.Println(dieVal)
 		for range num {
 			sum += rand.IntN(int(dieVal)) + 1
 		}

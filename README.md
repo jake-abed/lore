@@ -39,6 +39,12 @@ go install github.com/jake-abed/lore
 ### **help**
 Lists all available commands
 
+### **dice**
+-- **-a <dice-expression>** | Rolls a dice expression and returns the result summed up.
+-- **-i <dice-expression>** | Rolls a dice expression, printing each roll individually, then summing it up.
+#### Examples of Dice Expressions
+> d20, 1d6, 2d12+1, 1d4-1, 3d6+8, 5d20+12, 80d100-50, etc. 
+
 ### **monsters**
 - **-i <monster name or id>**    | Get basic information about a monster from the D&D 5e API.
 - **-f <monster-1> <monster-2>** | Simulate a turn-based fight between two monsters.
@@ -69,9 +75,9 @@ View, search, edit, and create custom places for your campaign.
 ## Roadmap
 
 While not set in stone, hitting a true v1.0.0 will include:
-- [ ] Dice Rolls
-- - `lore dice <dice-arg>` allowing for dynamic dice rolls!
-- - - For example `lore dice 2d6+1` rolls two six-sided die and adds one!
+- [x] ~~Dice Rolls~~
+- - ~~`lore dice <dice-arg>` allowing for dynamic dice rolls!~~
+- - - ~~For example `lore dice 2d6+1` rolls two six-sided die and adds one!~~
 - [ ] Quests
 - - Write quests and attach places and NPCs to them.
 - [ ] History/Events
