@@ -26,6 +26,16 @@ func BuildCommands() map[string]Command {
 			Flags:       nil,
 			Callback:    commandHelp,
 		},
+		"dice": {
+			Name:        "dice",
+			Description: "Roll dice in the following format: {qtyDice}d{Die}{+/-}{modifier}.",
+			Flags: map[string]string{
+				"-a":       "Rolls all the dice at once and returns the result.",
+				"-i":       "Rolls individual dice, presenting the result, then returning the total.",
+				"Examples": "1d6, 2d12+1, 1d4-1, 3d6+8, 5d20+12, 80d100-50, etc.",
+			},
+			Callback: commandDice,
+		},
 		"monsters": {
 			Name:        "monsters",
 			Description: "Get info about monsters and simulate fights.",

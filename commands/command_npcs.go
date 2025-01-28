@@ -3,10 +3,11 @@ package commands
 import (
 	"context"
 	"fmt"
-	"github.com/charmbracelet/huh"
-	"github.com/jake-abed/lore/internal/db"
 	"os"
 	"strconv"
+
+	"github.com/charmbracelet/huh"
+	"github.com/jake-abed/lore/internal/db"
 )
 
 func commandNpcs(s *State) error {

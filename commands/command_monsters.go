@@ -2,11 +2,12 @@ package commands
 
 import (
 	"fmt"
-	"github.com/jake-abed/lore/internal/dndapi"
 	"math/rand/v2"
 	"slices"
 	"strings"
 	"time"
+
+	"github.com/jake-abed/lore/internal/dndapi"
 )
 
 func commandMonsters(state *State) error {
