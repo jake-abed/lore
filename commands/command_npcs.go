@@ -32,7 +32,6 @@ func commandNpcs(s *State) error {
 		name := npcArgs[1]
 		npc, err := s.Db.ViewNpcByName(context.Background(), name)
 		if err != nil {
-			fmt.Println(err)
 			return err
 		}
 		viewNpc(npc)
@@ -42,10 +41,12 @@ func commandNpcs(s *State) error {
 		name := npcArgs[1]
 		npc, err := s.Db.ViewNpcByName(context.Background(), name)
 		if err != nil {
-			fmt.Println(err)
 			return err
 		}
-		editNpc(npc, s)
+		err = editNpc(npc, s)
+		if err != nil {
+			return err
+		}
 	}
 
 	if len(npcArgs) == 2 && (flag == "-s" || flag == "--search") {
@@ -99,6 +100,13 @@ func addNpc(s *State) error {
 	var languages string
 	var level string
 	var hitpoints string
+	var worldId int
+
+	worldCount, _ := s.Db.WorldCount(context.Background())
+
+	if worldCount == 0 {
+		return fmt.Errorf("You cannot create NPCs without first having a world to add to!")
+	}
 
 	npcForm := huh.NewForm(
 		huh.NewGroup(
@@ -178,6 +186,22 @@ func addNpc(s *State) error {
 		return err
 	}
 
+	worlds, err := s.Db.GetXWorlds(context.Background(), 100, 0)
+	if err != nil {
+		return err
+	}
+
+	msg := fmt.Sprintf("Which world does %s belong to?", name)
+
+	worldForm := huh.NewForm(
+		newPlaceSelectGroup(worlds, msg, &worldId),
+	).WithTheme(huh.ThemeBase16())
+
+	err = worldForm.Run()
+	if err != nil {
+		return err
+	}
+
 	parsedLevel, _ := strconv.ParseInt(level, 10, 64)
 	parsedHP, _ := strconv.ParseInt(hitpoints, 10, 64)
 
@@ -192,11 +216,11 @@ func addNpc(s *State) error {
 		Languages:   languages,
 		Level:       int(parsedLevel),
 		Hitpoints:   int(parsedHP),
+		WorldId:     int(worldId),
 	}
 
 	added, err := s.Db.AddNpc(context.Background(), npc)
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 
@@ -233,6 +257,7 @@ func editNpc(npc *db.Npc, s *State) error {
 	languages := npc.Languages
 	level := strconv.FormatInt(int64(npc.Level), 10)
 	hitpoints := strconv.FormatInt(int64(npc.Hitpoints), 10)
+	worldId := npc.WorldId
 
 	npcForm := huh.NewForm(
 		huh.NewGroup(
@@ -312,6 +337,22 @@ func editNpc(npc *db.Npc, s *State) error {
 		return err
 	}
 
+	worlds, err := s.Db.GetXWorlds(context.Background(), 100, 0)
+	if err != nil {
+		return err
+	}
+
+	msg := fmt.Sprintf("Which world does %s belong to?", name)
+
+	worldForm := huh.NewForm(
+		newPlaceSelectGroup(worlds, msg, &worldId),
+	).WithTheme(huh.ThemeBase16())
+
+	err = worldForm.Run()
+	if err != nil {
+		return err
+	}
+
 	parsedLevel, _ := strconv.ParseInt(level, 10, 64)
 	parsedHP, _ := strconv.ParseInt(hitpoints, 10, 64)
 
@@ -327,6 +368,7 @@ func editNpc(npc *db.Npc, s *State) error {
 		Languages:   languages,
 		Level:       int(parsedLevel),
 		Hitpoints:   int(parsedHP),
+		WorldId:     int(worldId),
 	}
 
 	res, err := s.Db.EditNpcById(context.Background(), &updatedNpc)

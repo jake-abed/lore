@@ -2,7 +2,6 @@ package db
 
 import (
 	"context"
-	"fmt"
 )
 
 type Npc struct {
@@ -17,6 +16,7 @@ type Npc struct {
 	Id          int
 	Level       int
 	Hitpoints   int
+	WorldId     int
 }
 
 type NpcParams struct {
@@ -30,6 +30,7 @@ type NpcParams struct {
 	Languages   string
 	Level       int
 	Hitpoints   int
+	WorldId     int
 }
 
 const createNpcQuery = `INSERT INTO npcs (
@@ -42,7 +43,8 @@ const createNpcQuery = `INSERT INTO npcs (
 	description,
 	languages,
 	level,
-	hitpoints
+	hitpoints,
+	world_id
 ) VALUES (
 	$1,
 	$2,
@@ -53,7 +55,8 @@ const createNpcQuery = `INSERT INTO npcs (
 	$7,
 	$8,
 	$9,
-	$10
+	$10,
+	$11
 ) RETURNING *`
 
 func (q *Queries) AddNpc(ctx context.Context, params *NpcParams) (*Npc, error) {
@@ -71,6 +74,7 @@ func (q *Queries) AddNpc(ctx context.Context, params *NpcParams) (*Npc, error) {
 		params.Languages,
 		params.Level,
 		params.Hitpoints,
+		params.WorldId,
 	)
 	err := row.Scan(
 		&npc.Id,
@@ -84,10 +88,10 @@ func (q *Queries) AddNpc(ctx context.Context, params *NpcParams) (*Npc, error) {
 		&npc.Sex,
 		&npc.Description,
 		&npc.Languages,
+		&npc.WorldId,
 	)
 
 	if err != nil {
-		fmt.Println(err)
 		return &Npc{}, err
 	}
 	return &npc, nil
@@ -103,8 +107,9 @@ SET name = $1,
 		hitpoints = $7,
 		sex = $8,
 		description = $9,
-		languages = $10
-WHERE id = $11
+		languages = $10,
+		world_id = $11
+WHERE id = $12
 RETURNING *`
 
 func (q *Queries) EditNpcById(
@@ -124,6 +129,7 @@ func (q *Queries) EditNpcById(
 		npc.Sex,
 		npc.Description,
 		npc.Languages,
+		npc.WorldId,
 		npc.Id,
 	)
 
@@ -140,6 +146,7 @@ func (q *Queries) EditNpcById(
 		&updated.Sex,
 		&updated.Description,
 		&updated.Languages,
+		&updated.WorldId,
 	)
 	if err != nil {
 		return nil, err
@@ -169,9 +176,9 @@ func (q *Queries) ViewNpcByName(
 		&npc.Sex,
 		&npc.Description,
 		&npc.Languages,
+		&npc.WorldId,
 	)
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 	return &npc, nil
@@ -204,6 +211,7 @@ func (q *Queries) SearchNpcsByName(
 			&new.Sex,
 			&new.Description,
 			&new.Languages,
+			&new.WorldId,
 		)
 		if err != nil {
 			return nil, err

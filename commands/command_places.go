@@ -476,22 +476,20 @@ func locationForm(s *State, location db.Location) (db.Location, error) {
 
 func newPlaceSelectGroup(
 	places interface{},
-	placeName string,
+	msg string,
 	val *int,
 ) *huh.Group {
-	if placeName == "" {
-		placeName = "this place"
+	if msg == "" {
+		msg = "Which place does this entry belong to?"
 	}
 
 	options := []huh.Option[int]{}
-	var placeType db.PlaceType
 
 	switch places.(type) {
 	case []*db.World:
 		worlds := places.([]*db.World)
 		for _, world := range worlds {
 			id, name := world.Inspect()
-			placeType = world.PlaceType()
 			option := huh.NewOption(fmt.Sprintf("%d - %s", id, name), id)
 
 			options = append(options, option)
@@ -511,7 +509,7 @@ func newPlaceSelectGroup(
 
 	return huh.NewGroup(
 		huh.NewSelect[int]().
-			Title(fmt.Sprintf("Which %s will %s belong to?", placeType, placeName)).
+			Title(msg).
 			Options(options...).
 			Value(val),
 	)

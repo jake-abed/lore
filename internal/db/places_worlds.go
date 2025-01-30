@@ -18,6 +18,18 @@ type WorldParams struct {
 	Desc string
 }
 
+const worldCountQuery = `SELECT COUNT(id) FROM worlds`
+
+func (q *Queries) WorldCount(ctx context.Context) (int, error) {
+	var count int
+	row := q.Db.QueryRowContext(ctx, worldCountQuery)
+	err := row.Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
 const createWorldQuery = `INSERT INTO worlds (name, description)
 	VALUES ($1, $2) RETURNING *`
 
