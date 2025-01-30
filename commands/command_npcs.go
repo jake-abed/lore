@@ -84,7 +84,7 @@ func npcHelp() {
 	search := bold.Render("  *** npcs -s <npc-name> | ")
 	searchMessage := "Searches the DB by NPC name returning all results."
 	fmt.Println(search + searchMessage)
-	view := bold.Render("  *** npcs -s <npc-name> | ")
+	view := bold.Render("  *** npcs -v <npc-name> | ")
 	viewMessage := "View an NPC by name (case-insensitive).\n"
 	fmt.Println(view + viewMessage)
 }
