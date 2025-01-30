@@ -23,8 +23,8 @@ type QuestParams struct {
 	Rewards     string
 	Notes       string
 	Level       int
-	IsStarted   int
-	IsFinished  int
+	IsStarted   bool
+	IsFinished  bool
 	CurrentStep int
 	WorldId     int
 }

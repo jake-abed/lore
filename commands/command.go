@@ -74,5 +74,16 @@ func BuildCommands() map[string]Command {
 			},
 			Callback: commandPlaces,
 		},
+		"quests": {
+			Name:        "quests",
+			Description: "Add, search, edit & view quests & quest steps.",
+			Flags: map[string]string{
+				"-a":     "Add a quest.",
+				"-e":     "Edit a quest by ID.",
+				"-v":     "View a quest by ID.",
+				"--step": "Specify that you are modifying the step of a quest.",
+			},
+			Callback: commandQuests,
+		},
 	}
 }
