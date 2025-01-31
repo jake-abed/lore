@@ -209,6 +209,19 @@ func (q *Queries) GetQuestsByName(
 	return quests, nil
 }
 
+const deleteQuestByIdQuery = `
+DELETE FROM quests WHERE id = $1
+`
+
+func (q *Queries) DeleteQuestById(ctx context.Context, id int) error {
+	_, err := q.Db.ExecContext(ctx, deleteQuestByIdQuery, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Scan Helpers
 
 func scanQuest(row *sql.Row, q *Quest) error {

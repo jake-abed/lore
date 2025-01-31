@@ -71,6 +71,13 @@ func commandQuests(s *State) error {
 		}
 
 		return nil
+	case "-d":
+		err := deleteQuest(s, flagArg)
+		if err != nil {
+			return err
+		}
+
+		return nil
 	default:
 		return fmt.Errorf("Unrecognized flag for quests command!")
 	}
@@ -180,6 +187,36 @@ func searchQuests(s *State, name string) ([]*db.Quest, error) {
 	}
 
 	return quests, nil
+}
+
+func deleteQuest(s *State, id string) error {
+	id64, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return err
+	}
+
+	i := int(id64)
+
+	quest, err := s.Db.GetQuestByIdQuery(context.Background(), i)
+	if err != nil {
+		return fmt.Errorf("Quest ID=%d not found!", i)
+	}
+
+	confirmMsg := fmt.Sprintf("Do you wish to delete the quest: '%s'?",
+		quest.Name,
+	)
+	proceed, err := confirmForm(confirmMsg)
+	if !proceed {
+		return nil
+	}
+
+	err = s.Db.DeleteQuestById(context.Background(), i)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
 }
 
 // Print functions
