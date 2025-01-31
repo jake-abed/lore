@@ -31,6 +31,15 @@ func commandQuests(s *State) error {
 		printQuest(quest)
 
 		return nil
+	case "-e":
+		quest, err := updateQuest(s, flagArg)
+		if err != nil {
+			return err
+		}
+
+		printQuest(quest)
+
+		return nil
 	case "-v":
 		quest, err := getQuestById(s, flagArg)
 		if err != nil {
@@ -72,6 +81,44 @@ func addQuest(s *State) (*db.Quest, error) {
 	}
 
 	return newQuest, nil
+}
+
+func updateQuest(s *State, id string) (*db.Quest, error) {
+	id64, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return nil, err
+	}
+
+	i := int(id64)
+
+	quest, err := s.Db.GetQuestByIdQuery(context.Background(), i)
+	if err != nil {
+		return nil, err
+	}
+
+	updatedQuest, err := questForm(s, *quest)
+	if err != nil {
+		return nil, err
+	}
+
+	params := db.UpdateQuestParams{
+		Name:       updatedQuest.Name,
+		Desc:       updatedQuest.Desc,
+		Rewards:    updatedQuest.Rewards,
+		Notes:      updatedQuest.Notes,
+		Level:      updatedQuest.Level,
+		IsFinished: updatedQuest.IsFinished,
+		IsStarted:  updatedQuest.IsStarted,
+		WorldId:    updatedQuest.WorldId,
+		Id:         updatedQuest.Id,
+	}
+
+	finalQuest, err := s.Db.UpdateQuestById(context.Background(), params)
+	if err != nil {
+		return nil, err
+	}
+
+	return finalQuest, nil
 }
 
 func getQuestById(s *State, id string) (*db.Quest, error) {
@@ -136,7 +183,7 @@ func questForm(s *State, quest db.Quest) (db.Quest, error) {
 		return db.Quest{}, err
 	}
 
-	var level string
+	level := fmt.Sprintf("%d", quest.Level)
 
 	nameForm := huh.NewForm(
 		huh.NewGroup(

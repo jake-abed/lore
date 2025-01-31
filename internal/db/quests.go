@@ -95,6 +95,60 @@ func (q *Queries) GetQuestByIdQuery(
 	return &quest, nil
 }
 
+type UpdateQuestParams struct {
+	Name       string
+	Desc       string
+	Rewards    string
+	Notes      string
+	Level      int
+	IsStarted  bool
+	IsFinished bool
+	WorldId    int
+	Id         int
+}
+
+const updateQuestByIdQuery = `
+UPDATE quests SET
+	name = $1,
+	description = $2,
+	rewards = $3,
+	notes = $4,
+	level = $5,
+	is_started = $6,
+	is_finished = $7,
+	world_id = $8
+	WHERE id = $9
+	RETURNING *
+`
+
+func (q *Queries) UpdateQuestById(
+	ctx context.Context,
+	p UpdateQuestParams,
+) (*Quest, error) {
+	quest := Quest{}
+
+	row := q.Db.QueryRowContext(
+		ctx,
+		updateQuestByIdQuery,
+		p.Name,
+		p.Desc,
+		p.Rewards,
+		p.Notes,
+		p.Level,
+		p.IsStarted,
+		p.IsFinished,
+		p.WorldId,
+		p.Id,
+	)
+
+	err := scanQuest(row, &quest)
+	if err != nil {
+		return nil, err
+	}
+
+	return &quest, nil
+}
+
 const getXQuestsQuery = `
 SELECT * FROM quests ORDER BY id ASC LIMIT $1 OFFSET $2
 `
