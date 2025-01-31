@@ -180,11 +180,11 @@ func (q *Queries) GetXQuests(
 }
 
 const getQuestsByNameQuery = `
-SELECT * FROM quests WHERE LOWER(name) LIKE LOWER(%1)
+SELECT * FROM quests WHERE LOWER(name) LIKE LOWER($1)
 	ORDER BY name ASC
 `
 
-func (q *Queries) getQuestsByName(
+func (q *Queries) GetQuestsByName(
 	ctx context.Context,
 	name string,
 ) ([]*Quest, error) {

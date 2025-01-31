@@ -40,6 +40,17 @@ func commandQuests(s *State) error {
 		printQuest(quest)
 
 		return nil
+	case "-s":
+		quests, err := searchQuests(s, flagArg)
+		if err != nil {
+			return err
+		}
+
+		for _, q := range quests {
+			printQuestQuick(q)
+		}
+
+		return nil
 	case "-v":
 		quest, err := getQuestById(s, flagArg)
 		if err != nil {
@@ -47,6 +58,17 @@ func commandQuests(s *State) error {
 		}
 
 		printQuest(quest)
+
+		return nil
+	case "-va":
+		quests, err := getAllQuests(s)
+		if err != nil {
+			return err
+		}
+
+		for _, q := range quests {
+			printQuestQuick(q)
+		}
 
 		return nil
 	default:
@@ -137,6 +159,29 @@ func getQuestById(s *State, id string) (*db.Quest, error) {
 	return quest, nil
 }
 
+// Technically, getAllQuests is grabbing '1,000,000,000' quests. The chance
+// that a user is somehow getting storing more than that locally is next to
+// nil in my opinion.
+func getAllQuests(s *State) ([]*db.Quest, error) {
+	quests, err := s.Db.GetXQuests(context.Background(), 1_000_000_000, 0)
+	if err != nil {
+		return nil, err
+	}
+
+	return quests, nil
+}
+
+func searchQuests(s *State, name string) ([]*db.Quest, error) {
+	query := "%" + name + "%"
+
+	quests, err := s.Db.GetQuestsByName(context.Background(), query)
+	if err != nil {
+		return nil, err
+	}
+
+	return quests, nil
+}
+
 // Print functions
 
 func printQuest(q *db.Quest) {
@@ -169,6 +214,14 @@ func printQuest(q *db.Quest) {
 		fmt.Sprintf("%d", q.WorldId))
 	fmt.Println(started)
 	fmt.Println(finished)
+}
+
+func printQuestQuick(q *db.Quest) {
+	descRunes := []rune(q.Desc)
+	shortDesc := string(descRunes[0:31]) + "..."
+	fmt.Printf("Id: %d | Name: %s | Desc: %s | Level: %d | World Id: %d\n",
+		q.Id, q.Name, shortDesc, q.Level, q.WorldId,
+	)
 }
 
 // Forms
