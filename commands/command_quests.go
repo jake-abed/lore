@@ -3,6 +3,7 @@ package commands
 import (
 	"context"
 	"fmt"
+	"os"
 	"strconv"
 
 	"github.com/charmbracelet/huh"
@@ -40,7 +41,18 @@ func commandQuests(s *State) error {
 			return err
 		}
 
-		fmt.Println(quest)
+		printQuest(quest)
+
+		return nil
+	case "-v":
+		quest, err := getQuestById(s, flagArg)
+		if err != nil {
+			return err
+		}
+
+		printQuest(quest)
+
+		return nil
 	default:
 		return fmt.Errorf("Unrecognized flag for quests command!")
 	}
@@ -71,10 +83,63 @@ func addQuest(s *State) (*db.Quest, error) {
 
 	newQuest, err := s.Db.AddQuest(context.Background(), &questParams)
 	if err != nil {
-		return nil, nil
+		if err.Error() == "user aborted" {
+			fmt.Println("User exited Lore form early!")
+			os.Exit(0)
+		}
+		return nil, err
 	}
 
 	return newQuest, nil
+}
+
+func getQuestById(s *State, id string) (*db.Quest, error) {
+	id64, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return nil, err
+	}
+
+	i := int(id64)
+
+	quest, err := s.Db.GetQuestByIdQuery(context.Background(), i)
+	if err != nil {
+		return nil, err
+	}
+
+	return quest, nil
+}
+
+// Print functions
+
+func printQuest(q *db.Quest) {
+	var started string
+	var finished string
+
+	if q.IsStarted {
+		started = bold.Render("Quest Has Been Started!")
+	} else {
+		started = bold.Render("Quest Has Not Been Started!")
+	}
+
+	if q.IsFinished {
+		finished = bold.Render("Quest Is Finished!")
+	} else {
+		finished = bold.Render("Quest Is Not Finished!")
+	}
+
+	headerMsg := fmt.Sprintf("Quest: %-16s Id: %-2d", q.Name, q.Id)
+	printHeader(headerMsg)
+	fmt.Println(bold.Render("Description:"))
+	fmt.Println(q.Desc)
+	fmt.Println(bold.Render("Rewards:"))
+	fmt.Println(q.Rewards)
+	fmt.Println(bold.Render("Notes:"))
+	fmt.Println(q.Notes)
+	fmt.Println(bold.Render("Quest Level : ") + string(q.Level))
+	fmt.Println(bold.Render("Belongs to World Id: ") +
+		fmt.Sprintf("%d", q.WorldId))
+	fmt.Println(started)
+	fmt.Println(finished)
 }
 
 // Forms
