@@ -19,20 +19,7 @@ func commandQuests(s *State) error {
 		return nil
 	}
 
-	var stepFlag string
-
-	for _, arg := range args {
-		if isStepFlag(arg) {
-			stepFlag = arg
-		}
-	}
-
 	flag, flagArg := parseQuestFlagArg(args)
-
-	if stepFlag == "--step" {
-		fmt.Println("Implement step subcommands.")
-		return nil
-	}
 
 	switch flag {
 	case "-a":
@@ -56,11 +43,6 @@ func commandQuests(s *State) error {
 	default:
 		return fmt.Errorf("Unrecognized flag for quests command!")
 	}
-
-	fmt.Println(stepFlag, flag, flagArg)
-
-	fmt.Println("Placeholder for quest command!")
-	return nil
 }
 
 func addQuest(s *State) (*db.Quest, error) {
@@ -70,15 +52,14 @@ func addQuest(s *State) (*db.Quest, error) {
 	}
 
 	questParams := db.QuestParams{
-		Name:        quest.Name,
-		Desc:        quest.Desc,
-		Rewards:     quest.Rewards,
-		Notes:       quest.Notes,
-		Level:       quest.Level,
-		IsFinished:  quest.IsFinished,
-		IsStarted:   quest.IsStarted,
-		CurrentStep: quest.CurrentStep,
-		WorldId:     quest.WorldId,
+		Name:       quest.Name,
+		Desc:       quest.Desc,
+		Rewards:    quest.Rewards,
+		Notes:      quest.Notes,
+		Level:      quest.Level,
+		IsFinished: quest.IsFinished,
+		IsStarted:  quest.IsStarted,
+		WorldId:    quest.WorldId,
 	}
 
 	newQuest, err := s.Db.AddQuest(context.Background(), &questParams)
@@ -135,7 +116,8 @@ func printQuest(q *db.Quest) {
 	fmt.Println(q.Rewards)
 	fmt.Println(bold.Render("Notes:"))
 	fmt.Println(q.Notes)
-	fmt.Println(bold.Render("Quest Level : ") + string(q.Level))
+	fmt.Println(bold.Render("Quest Level: ") +
+		fmt.Sprintf("%d", q.Level))
 	fmt.Println(bold.Render("Belongs to World Id: ") +
 		fmt.Sprintf("%d", q.WorldId))
 	fmt.Println(started)
@@ -217,13 +199,9 @@ func questForm(s *State, quest db.Quest) (db.Quest, error) {
 
 // Flag Helpers
 
-func isStepFlag(arg string) bool {
-	return arg == "--step"
-}
-
 func isQuestCommandFlag(flag string) bool {
 	return flag == "-a" || flag == "-v" || flag == "-e" ||
-		flag == "-d" || flag == "-s"
+		flag == "-d" || flag == "-s" || flag == "-va"
 }
 
 func parseQuestFlagArg(args []string) (string, string) {

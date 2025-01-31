@@ -2,31 +2,30 @@ package db
 
 import (
 	"context"
+	"database/sql"
 )
 
 type Quest struct {
-	Name        string
-	Desc        string
-	Rewards     string
-	Notes       string
-	Level       int
-	IsStarted   bool
-	IsFinished  bool
-	CurrentStep int
-	WorldId     int
-	Id          int
+	Name       string
+	Desc       string
+	Rewards    string
+	Notes      string
+	Level      int
+	IsStarted  bool
+	IsFinished bool
+	WorldId    int
+	Id         int
 }
 
 type QuestParams struct {
-	Name        string
-	Desc        string
-	Rewards     string
-	Notes       string
-	Level       int
-	IsStarted   bool
-	IsFinished  bool
-	CurrentStep int
-	WorldId     int
+	Name       string
+	Desc       string
+	Rewards    string
+	Notes      string
+	Level      int
+	IsStarted  bool
+	IsFinished bool
+	WorldId    int
 }
 
 const createQuestQuery = `
@@ -38,7 +37,6 @@ INSERT INTO quests (
 	level,
 	is_started,
   is_finished,
-  current_step,
   world_id
 ) VALUES (
 	$1,
@@ -48,8 +46,7 @@ INSERT INTO quests (
 	$5,
 	$6,
 	$7,
-	$8,
-	$9
+	$8
 ) RETURNING *
 `
 
@@ -68,22 +65,10 @@ func (q *Queries) AddQuest(
 		p.Level,
 		p.IsStarted,
 		p.IsFinished,
-		p.CurrentStep,
 		p.WorldId,
 	)
 
-	err := row.Scan(
-		&quest.Id,
-		&quest.Name,
-		&quest.Desc,
-		&quest.Rewards,
-		&quest.Notes,
-		&quest.Level,
-		&quest.IsStarted,
-		&quest.IsFinished,
-		&quest.CurrentStep,
-		&quest.WorldId,
-	)
+	err := scanQuest(row, &quest)
 	if err != nil {
 		return nil, err
 	}
@@ -102,18 +87,7 @@ func (q *Queries) GetQuestByIdQuery(
 	quest := Quest{}
 	row := q.Db.QueryRowContext(ctx, getQuestById, id)
 
-	err := row.Scan(
-		&quest.Id,
-		&quest.Name,
-		&quest.Desc,
-		&quest.Rewards,
-		&quest.Notes,
-		&quest.Level,
-		&quest.IsStarted,
-		&quest.IsFinished,
-		&quest.CurrentStep,
-		&quest.WorldId,
-	)
+	err := scanQuest(row, &quest)
 	if err != nil {
 		return nil, err
 	}
@@ -121,24 +95,102 @@ func (q *Queries) GetQuestByIdQuery(
 	return &quest, nil
 }
 
-type QuestStep struct {
-	Name       string
-	Type       string
-	Desc       string
-	Reward     string
-	IsStarted  bool
-	IsFinished bool
-	QuestId    int
-	WorldId    int
+const getXQuestsQuery = `
+SELECT * FROM quests ORDER BY id ASC LIMIT $1 OFFSET $2
+`
+
+func (q *Queries) GetXQuests(
+	ctx context.Context,
+	x int,
+	offset int,
+) ([]*Quest, error) {
+	quests := []*Quest{}
+
+	rows, err := q.Db.QueryContext(ctx, getXQuestsQuery, x, offset)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		quest := Quest{}
+
+		err := scanQuestRows(rows, &quest)
+		if err != nil {
+			return nil, err
+		}
+
+		quests = append(quests, &quest)
+	}
+
+	return quests, nil
 }
 
-type QuestStepParams struct {
-	Name       string
-	Type       string
-	Desc       string
-	Reward     string
-	IsStarted  bool
-	IsFinished bool
-	QuestId    int
-	WorldId    int
+const getQuestsByNameQuery = `
+SELECT * FROM quests WHERE LOWER(name) LIKE LOWER(%1)
+	ORDER BY name ASC
+`
+
+func (q *Queries) getQuestsByName(
+	ctx context.Context,
+	name string,
+) ([]*Quest, error) {
+	quests := []*Quest{}
+
+	rows, err := q.Db.QueryContext(ctx, getQuestsByNameQuery, name)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		quest := Quest{}
+
+		err := scanQuestRows(rows, &quest)
+		if err != nil {
+			return nil, err
+		}
+
+		quests = append(quests, &quest)
+	}
+
+	return quests, nil
+}
+
+// Scan Helpers
+
+func scanQuest(row *sql.Row, q *Quest) error {
+	err := row.Scan(
+		&q.Id,
+		&q.Name,
+		&q.Desc,
+		&q.Rewards,
+		&q.Notes,
+		&q.Level,
+		&q.IsStarted,
+		&q.IsFinished,
+		&q.WorldId,
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func scanQuestRows(rows *sql.Rows, q *Quest) error {
+	err := rows.Scan(
+		&q.Id,
+		&q.Name,
+		&q.Desc,
+		&q.Rewards,
+		&q.Notes,
+		&q.Level,
+		&q.IsStarted,
+		&q.IsFinished,
+		&q.WorldId,
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
