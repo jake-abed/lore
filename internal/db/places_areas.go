@@ -85,6 +85,30 @@ func (q *Queries) GetAreaByName(
 	return &area, nil
 }
 
+const getAllAreasQuery = `SELECT * FROM areas`
+
+func (q *Queries) GetAllAreas(ctx context.Context) ([]*Area, error) {
+	areas := []*Area{}
+
+	rows, err := q.Db.QueryContext(ctx, getAllAreasQuery)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		a := Area{}
+
+		err = rows.Scan(&a.Id, &a.Name, &a.Type, &a.Desc, &a.WorldId)
+		if err != nil {
+			return nil, err
+		}
+
+		areas = append(areas, &a)
+	}
+
+	return areas, nil
+}
+
 const updateAreaByIdQuery = `UPDATE areas 
 	SET name = $1, type = $2, description = $3, world_id = $4 WHERE id = $5
 	RETURNING *

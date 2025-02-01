@@ -63,6 +63,13 @@ func commandPlaces(s *State) error {
 		}
 		printPlace(place)
 		return nil
+	case "-va":
+		err := viewAllPlaces(s, typeFlag)
+		if err != nil {
+			return err
+		}
+
+		return nil
 	case "-e":
 		place, err := getPlaceByName(s, typeFlag, strings.ToLower(flagArg))
 		if err != nil {
@@ -114,10 +121,34 @@ func printPlace(p db.Place) {
 	}
 }
 
+func printPlaceQuick(p db.Place) {
+	switch p.(type) {
+	case *db.World:
+		world := p.(*db.World)
+		printWorldQuick(world)
+	case *db.Area:
+		area := p.(*db.Area)
+		printAreaQuick(area)
+	case *db.Location:
+		location := p.(*db.Location)
+		printLocationQuick(location)
+	default:
+		fmt.Println(p)
+		fmt.Printf("Lore has no such place type as %T\n", p)
+	}
+}
+
 func printWorld(w *db.World) {
 	headerMsg := fmt.Sprintf("World: %-16s Id: %-2d", w.Name, w.Id)
 	printHeader(headerMsg)
 	fmt.Println(bold.Render("Description: ") + w.Desc)
+}
+
+func printWorldQuick(w *db.World) {
+	r := []rune(w.Desc)
+	s := string(r[:32]) + "..."
+	msg := fmt.Sprintf("Id: %d | Name: %s | Desc: %s", w.Id, w.Name, s)
+	fmt.Println(msg)
 }
 
 func printArea(a *db.Area) {
@@ -129,6 +160,15 @@ func printArea(a *db.Area) {
 		fmt.Sprintf("%d", a.WorldId))
 }
 
+func printAreaQuick(a *db.Area) {
+	r := []rune(a.Desc)
+	s := string(r[:32]) + "..."
+	msg := fmt.Sprintf("Id: %d | Name: %s | Type: %s | Desc: %s | World Id: %d",
+		a.Id, a.Name, a.Type, s, a.WorldId,
+	)
+	fmt.Println(msg)
+}
+
 func printLocation(l *db.Location) {
 	headerMsg := fmt.Sprintf("Location: %-16s Id: %-2d", l.Name, l.Id)
 	printHeader(headerMsg)
@@ -136,6 +176,16 @@ func printLocation(l *db.Location) {
 	fmt.Println(bold.Render("Description: ") + l.Desc)
 	fmt.Println(bold.Render("Belongs to Area Id: ") +
 		fmt.Sprintf("%d", l.AreaId))
+}
+
+func printLocationQuick(l *db.Location) {
+	r := []rune(l.Desc)
+	s := string(r[:32]) + "..."
+	msg := fmt.Sprintf("Id: %d | Name: %s | Type: %s | Desc: %s | World Id: %d",
+		l.Id, l.Name, l.Type, s, l.AreaId,
+	)
+	fmt.Println(msg)
+
 }
 
 /// Add Place Helper Function
@@ -300,7 +350,7 @@ func searchPlaceByName(s *State, placeType string, name string) error {
 	case "--world":
 		worlds, err := s.Db.SearchWorldsByName(
 			context.Background(),
-			db.SearchParams{Name: name, Limit: 20, Offset: 0},
+			db.SearchParams{Name: name, Limit: 1000, Offset: 0},
 		)
 		if err != nil {
 			return err
@@ -315,7 +365,7 @@ func searchPlaceByName(s *State, placeType string, name string) error {
 	case "--area":
 		areas, err := s.Db.SearchAreasByName(
 			context.Background(),
-			db.SearchParams{Name: name, Limit: 20, Offset: 0},
+			db.SearchParams{Name: name, Limit: 1000, Offset: 0},
 		)
 		if err != nil {
 			return err
@@ -330,7 +380,7 @@ func searchPlaceByName(s *State, placeType string, name string) error {
 	case "--location":
 		locations, err := s.Db.SearchLocationsByName(
 			context.Background(),
-			db.SearchParams{Name: name, Limit: 20, Offset: 0},
+			db.SearchParams{Name: name, Limit: 1000, Offset: 0},
 		)
 		if err != nil {
 			return err
@@ -375,6 +425,46 @@ func deletePlaceById(s *State, placeType string, id int) error {
 		return err
 	default:
 		return fmt.Errorf("Place type not recognized, could not delete.")
+	}
+}
+
+func viewAllPlaces(s *State, placeFlag string) error {
+	switch placeFlag {
+	case "--world":
+		worlds, err := s.Db.GetXWorlds(context.Background(), 1_000_000_000, 0)
+		if err != nil {
+			return nil
+		}
+
+		for _, w := range worlds {
+			printWorldQuick(w)
+		}
+
+		return nil
+	case "--area":
+		areas, err := s.Db.GetAllAreas(context.Background())
+		if err != nil {
+			return nil
+		}
+
+		for _, a := range areas {
+			printAreaQuick(a)
+		}
+
+		return nil
+	case "--location":
+		locations, err := s.Db.GetAllLocations(context.Background())
+		if err != nil {
+			return nil
+		}
+
+		for _, l := range locations {
+			printLocationQuick(l)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("No such place flag exists!")
 	}
 }
 
@@ -542,7 +632,7 @@ func isPlaceTypeFlag(flag string) bool {
 }
 
 func isPlaceCommandFlag(flag string) bool {
-	return flag == "-a" || flag == "-v" || flag == "-e" ||
+	return flag == "-a" || flag == "-v" || flag == "-va" || flag == "-e" ||
 		flag == "-d" || flag == "-s"
 }
 
