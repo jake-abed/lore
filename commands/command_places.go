@@ -579,7 +579,7 @@ func placesHelp() {
 	delete := bold.Render("  *** places <place flag> -d <id> | ")
 	deleteMessage := "Delete a place by ID."
 	fmt.Println(delete + deleteMessage)
-	search := bold.Render("  *** places -s <name> | ")
+	search := bold.Render("  *** places -s <place flag> <name> | ")
 	searchMessage := "Searches the DB by place name returning all results.\n"
 	fmt.Println(search + searchMessage)
 }

@@ -15,7 +15,9 @@ func commandQuests(s *State) error {
 
 	// Break out if user did not provide enough flags.
 	if len(args) == 0 {
-		fmt.Println("Quests command requires at least one argument!")
+		msg := ErrorMsg.Render("Quests command requires at least one argument!")
+		fmt.Println(msg)
+		questsHelp()
 		return nil
 	}
 
@@ -79,8 +81,11 @@ func commandQuests(s *State) error {
 
 		return nil
 	default:
-		return fmt.Errorf("Unrecognized flag for quests command!")
+		fmt.Println("Unrecognized flag for quests command!")
 	}
+
+	questsHelp()
+	return nil
 }
 
 func addQuest(s *State) (*db.Quest, error) {
@@ -351,4 +356,27 @@ func parseQuestFlagArg(args []string) (string, string) {
 	}
 
 	return "", ""
+}
+
+// Quests Help Command
+
+func questsHelp() {
+	intro := "Lore Quests Help\n"
+	introTip := "Quests subcommand information"
+	fmt.Println(header.Render(intro + introTip))
+	add := bold.Render("  *** quests -a | ")
+	addMessage := "Add a new quest."
+	fmt.Println(add + addMessage)
+	edit := bold.Render("  *** quests -e <id> | ")
+	editMessage := "Edit a place by integer ID."
+	fmt.Println(edit + editMessage)
+	view := bold.Render("  *** quests -v <id> | ")
+	viewMessage := "View a quest by integer ID."
+	fmt.Println(view + viewMessage)
+	delete := bold.Render("  *** quests -d <id> | ")
+	deleteMessage := "Delete a quest by ID."
+	fmt.Println(delete + deleteMessage)
+	search := bold.Render("  *** quests -s <name> | ")
+	searchMessage := "Searches the DB by quest name returning all results.\n"
+	fmt.Println(search + searchMessage)
 }
