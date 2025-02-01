@@ -8,6 +8,7 @@ import (
 
 	"github.com/charmbracelet/huh"
 	"github.com/jake-abed/lore/internal/db"
+	"github.com/jake-abed/lore/internal/utils"
 )
 
 func commandQuests(s *State) error {
@@ -259,8 +260,7 @@ func printQuest(q *db.Quest) {
 }
 
 func printQuestQuick(q *db.Quest) {
-	descRunes := []rune(q.Desc)
-	shortDesc := string(descRunes[0:31]) + "..."
+	shortDesc := utils.TruncateString(q.Desc, 48) + "..."
 	fmt.Printf("Id: %d | Name: %s | Desc: %s | Level: %d | World Id: %d\n",
 		q.Id, q.Name, shortDesc, q.Level, q.WorldId,
 	)

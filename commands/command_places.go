@@ -9,6 +9,7 @@ import (
 
 	"github.com/charmbracelet/huh"
 	"github.com/jake-abed/lore/internal/db"
+	"github.com/jake-abed/lore/internal/utils"
 )
 
 func commandPlaces(s *State) error {
@@ -145,10 +146,8 @@ func printWorld(w *db.World) {
 }
 
 func printWorldQuick(w *db.World) {
-	r := []rune(w.Desc)
-	s := string(r[:32]) + "..."
-	msg := fmt.Sprintf("Id: %d | Name: %s | Desc: %s", w.Id, w.Name, s)
-	fmt.Println(msg)
+	s := utils.TruncateString(w.Desc, 32) + "..."
+	fmt.Printf("Id: %d | Name: %s | Desc: %s\n", w.Id, w.Name, s)
 }
 
 func printArea(a *db.Area) {
@@ -161,8 +160,7 @@ func printArea(a *db.Area) {
 }
 
 func printAreaQuick(a *db.Area) {
-	r := []rune(a.Desc)
-	s := string(r[:32]) + "..."
+	s := utils.TruncateString(a.Desc, 32) + "..."
 	msg := fmt.Sprintf("Id: %d | Name: %s | Type: %s | Desc: %s | World Id: %d",
 		a.Id, a.Name, a.Type, s, a.WorldId,
 	)
@@ -179,8 +177,7 @@ func printLocation(l *db.Location) {
 }
 
 func printLocationQuick(l *db.Location) {
-	r := []rune(l.Desc)
-	s := string(r[:32]) + "..."
+	s := utils.TruncateString(l.Desc, 32) + "..."
 	msg := fmt.Sprintf("Id: %d | Name: %s | Type: %s | Desc: %s | World Id: %d",
 		l.Id, l.Name, l.Type, s, l.AreaId,
 	)
@@ -436,6 +433,8 @@ func viewAllPlaces(s *State, placeFlag string) error {
 			return nil
 		}
 
+		fmt.Println("Viewing all worlds: ")
+
 		for _, w := range worlds {
 			printWorldQuick(w)
 		}
@@ -447,6 +446,8 @@ func viewAllPlaces(s *State, placeFlag string) error {
 			return nil
 		}
 
+		fmt.Println("Viewing all areas: ")
+
 		for _, a := range areas {
 			printAreaQuick(a)
 		}
@@ -457,6 +458,8 @@ func viewAllPlaces(s *State, placeFlag string) error {
 		if err != nil {
 			return nil
 		}
+
+		fmt.Println("Viewing all locations: ")
 
 		for _, l := range locations {
 			printLocationQuick(l)

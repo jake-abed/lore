@@ -9,3 +9,13 @@ func SanitizeArgs(args []string) []string {
 	}
 	return args
 }
+
+func TruncateString(s string, max int) string {
+	var out string
+	if len(s) > max {
+		out = s[:max]
+	} else {
+		out = s
+	}
+	return out
+}
