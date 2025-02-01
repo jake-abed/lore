@@ -29,7 +29,7 @@ func commandPlaces(s *State) error {
 		}
 	}
 
-	flag, flagArg := parseFlagArg(args)
+	flag, flagArg := parsePlaceFlagArg(args)
 
 	/* If the user is not searching, they have to have provided a type Flag
 	somewhere in the arg list. If not, break out and error. If they are searching
@@ -541,16 +541,16 @@ func isPlaceTypeFlag(flag string) bool {
 		flag == "--sublocation"
 }
 
-func isCommandFlag(flag string) bool {
+func isPlaceCommandFlag(flag string) bool {
 	return flag == "-a" || flag == "-v" || flag == "-e" ||
 		flag == "-d" || flag == "-s"
 }
 
-func parseFlagArg(args []string) (string, string) {
+func parsePlaceFlagArg(args []string) (string, string) {
 	for i, arg := range args {
-		if isCommandFlag(arg) && (1+i) < len(args) {
+		if isPlaceCommandFlag(arg) && (1+i) < len(args) {
 			return arg, args[i+1]
-		} else if isCommandFlag(arg) {
+		} else if isPlaceCommandFlag(arg) {
 			return arg, ""
 		}
 	}
@@ -579,7 +579,7 @@ func placesHelp() {
 	delete := bold.Render("  *** places <place flag> -d <id> | ")
 	deleteMessage := "Delete a place by ID."
 	fmt.Println(delete + deleteMessage)
-	search := bold.Render("  *** places -s <name> | ")
+	search := bold.Render("  *** places -s <place flag> <name> | ")
 	searchMessage := "Searches the DB by place name returning all results.\n"
 	fmt.Println(search + searchMessage)
 }
