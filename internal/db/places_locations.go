@@ -118,6 +118,30 @@ func (q *Queries) UpdateLocationById(
 	return &updatedLocation, nil
 }
 
+const getAllLocationsQuery = `SELECT * FROM locations`
+
+func (q *Queries) GetAllLocations(ctx context.Context) ([]*Location, error) {
+	locations := []*Location{}
+
+	rows, err := q.Db.QueryContext(ctx, getAllLocationsQuery)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		l := Location{}
+
+		err = rows.Scan(&l.Id, &l.Name, &l.Type, &l.Desc, &l.AreaId)
+		if err != nil {
+			return nil, err
+		}
+
+		locations = append(locations, &l)
+	}
+
+	return locations, nil
+}
+
 const getXLocationsQuery = `
 SELECT * FROM locations ORDER BY locations.id ASC LIMIT $1 OFFSET $2
 `
