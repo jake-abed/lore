@@ -19,17 +19,20 @@ func main() {
 	if err != nil {
 		err = config.CreateDefaultConfig()
 		if err != nil {
-			fmt.Println(err)
+			msg := commands.ErrorMsg.Render(err.Error())
+			fmt.Println(msg)
 		}
 		cfg, err = config.ReadConfig()
 		if err != nil {
-			fmt.Println(err)
+			msg := commands.ErrorMsg.Render(err.Error())
+			fmt.Println(msg)
 		}
 	}
 
 	sqliteDb, err := db.OpenDb(&cfg)
 	if err != nil {
-		fmt.Println(err)
+		msg := commands.ErrorMsg.Render(err.Error())
+		fmt.Println(msg)
 	}
 	defer sqliteDb.Close()
 
@@ -50,25 +53,27 @@ func main() {
 			command = allCommands["help"]
 			err := command.Callback(state)
 			if err != nil {
-				fmt.Println(err)
+				msg := commands.ErrorMsg.Render(err.Error())
+				fmt.Println(msg)
 			}
 		} else if !ok {
 			msg := fmt.Sprintf("Lore has no %s command!", args[0])
 			fmt.Println(commands.ErrorMsg.Render(msg))
-			time.Sleep(1200 * time.Millisecond)
+			time.Sleep(1000 * time.Millisecond)
 			fmt.Print("Now showing the help command")
-			time.Sleep(311 * time.Millisecond)
+			time.Sleep(690 * time.Millisecond)
 			fmt.Print(".")
-			time.Sleep(311 * time.Millisecond)
+			time.Sleep(690 * time.Millisecond)
 			fmt.Print(".")
-			time.Sleep(311 * time.Millisecond)
+			time.Sleep(690 * time.Millisecond)
 			fmt.Print(".\n")
-			time.Sleep(311 * time.Millisecond)
+			time.Sleep(690 * time.Millisecond)
 			allCommands["help"].Callback(state)
 		} else {
 			err := command.Callback(state)
 			if err != nil {
-				fmt.Println(err)
+				msg := commands.ErrorMsg.Render(err.Error())
+				fmt.Println(msg)
 			}
 		}
 	}
