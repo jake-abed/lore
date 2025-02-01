@@ -666,6 +666,9 @@ func placesHelp() {
 	view := bold.Render("  *** places <place flag> -v <name> | ")
 	viewMessage := "View a place by name (case-insensitive)."
 	fmt.Println(view + viewMessage)
+	viewAll := bold.Render("  *** places <place-flag> -va | ")
+	viewAllMsg := "View all places by place-flag. Great for piping."
+	fmt.Println(viewAll + viewAllMsg)
 	delete := bold.Render("  *** places <place flag> -d <id> | ")
 	deleteMessage := "Delete a place by ID."
 	fmt.Println(delete + deleteMessage)

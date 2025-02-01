@@ -67,6 +67,7 @@ func BuildCommands() map[string]Command {
 				"-s":            "Search places by name. Returns all possible matches",
 				"-d":            "Delete a place by name. Case-sensitive.",
 				"-v":            "Inspect a place and it's information by name.",
+				"-va":           "View a short summary of all places by place flag.",
 				"--world":       "Specify an operation on a world.",
 				"--area":        "Specify an operation on an area.",
 				"--location":    "Specify an operation on a location.",
