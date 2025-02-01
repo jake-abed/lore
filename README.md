@@ -79,7 +79,9 @@ While not set in stone, hitting a true v1.0.0 will include:
 - - ~~`lore dice <dice-arg>` allowing for dynamic dice rolls!~~
 - - - ~~For example `lore dice 2d6+1` rolls two six-sided die and adds one!~~
 - [ ] Quests
-- - Write quests and attach places and NPCs to them.
+- - [x] ~~Write quests.~~
+- - [ ] Attach NPCs to quests
+- - [ ] Attach places to quests?
 - [ ] History/Events
 - - The final shape isn't decided, but historical events can be important.
 - [ ] Players
