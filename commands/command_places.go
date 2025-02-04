@@ -37,7 +37,7 @@ func commandPlaces(s *State) error {
 	run the search functionality which will look up all places!
 	*/
 	if flag != "-s" && typeFlag == "" {
-		return fmt.Errorf("Flag %s requires a place type flag as well.", flag)
+		return fmt.Errorf("flag %s requires a place type flag as well", flag)
 	} else if flag == "-s" && flagArg != "" {
 		searchTerm := "%" + strings.ToLower(flagArg) + "%"
 		err := searchPlaceByName(s, typeFlag, searchTerm)
@@ -88,7 +88,7 @@ func commandPlaces(s *State) error {
 	case "-d":
 		id, err := strconv.ParseInt(flagArg, 10, 64)
 		if err != nil {
-			return fmt.Errorf("Cannot delete by name. Must delete by ID (integer).")
+			return fmt.Errorf("cannot delete by name. Must delete by ID")
 		}
 		err = deletePlaceById(s, typeFlag, int(id))
 		if err != nil {
@@ -97,7 +97,7 @@ func commandPlaces(s *State) error {
 
 		return nil
 	default:
-		msg := fmt.Sprintf("Uh oh! You used an invalid flag or wrote your command wrong!")
+		msg := "uh oh! You used an invalid flag or wrote your command wrong"
 		fmt.Println(ErrorMsg.Render(msg))
 		return nil
 	}
@@ -199,7 +199,7 @@ func addPlace(s *State, typeFlag string) (db.Place, error) {
 			return &db.World{}, err
 		}
 		if world.Name == "" || world.Desc == "" {
-			return &db.World{}, fmt.Errorf("World not added.")
+			return &db.World{}, fmt.Errorf("world not added")
 		}
 		worldParams := db.WorldParams{Name: world.Name, Desc: world.Desc}
 
@@ -265,10 +265,9 @@ func addPlace(s *State, typeFlag string) (db.Place, error) {
 }
 
 func editPlace(s *State, place db.Place) (db.Place, error) {
-	switch place.(type) {
+	switch p := place.(type) {
 	case *db.World:
-		world := *place.(*db.World)
-		world, err := worldForm(world)
+		world, err := worldForm(*p)
 		if err != nil {
 			return nil, err
 		}
@@ -280,8 +279,7 @@ func editPlace(s *State, place db.Place) (db.Place, error) {
 
 		return updatedWorld, nil
 	case *db.Area:
-		area := *place.(*db.Area)
-		area, err := areaForm(s, area)
+		area, err := areaForm(s, *p)
 		if err != nil {
 			return nil, err
 		}
@@ -293,8 +291,7 @@ func editPlace(s *State, place db.Place) (db.Place, error) {
 
 		return updatedArea, nil
 	case *db.Location:
-		location := *place.(*db.Location)
-		location, err := locationForm(s, location)
+		location, err := locationForm(s, *p)
 		if err != nil {
 			if err.Error() == "user aborted" {
 				fmt.Println("User exited Lore form early!")
@@ -313,7 +310,7 @@ func editPlace(s *State, place db.Place) (db.Place, error) {
 		return updatedLocation, err
 	default:
 		fmt.Println("Uh oh, cannot edit this place.")
-		return nil, fmt.Errorf("Non editable place type: %T", place)
+		return nil, fmt.Errorf("on editable place type: %T", place)
 	}
 }
 
@@ -390,7 +387,7 @@ func searchPlaceByName(s *State, placeType string, name string) error {
 
 		return nil
 	default:
-		return fmt.Errorf("%s not recognized when searching.", placeType)
+		return fmt.Errorf("%s not recognized when searching", placeType)
 	}
 }
 
@@ -398,30 +395,30 @@ func deletePlaceById(s *State, placeType string, id int) error {
 	switch placeType {
 	case "--world":
 		msg := fmt.Sprintf("delete World ID '%d'", id)
-		cont, err := confirmForm(msg)
+		cont, _ := confirmForm(msg)
 		if !cont {
 			return nil
 		}
-		err = s.Db.DeleteWorldByIdQuery(context.Background(), id)
+		err := s.Db.DeleteWorldByIdQuery(context.Background(), id)
 		return err
 	case "--area":
 		msg := fmt.Sprintf("delete Area ID '%d'", id)
-		cont, err := confirmForm(msg)
+		cont, _ := confirmForm(msg)
 		if !cont {
 			return nil
 		}
-		err = s.Db.DeleteAreaByIdQuery(context.Background(), id)
+		err := s.Db.DeleteAreaByIdQuery(context.Background(), id)
 		return err
 	case "--location":
 		msg := fmt.Sprintf("delete Location ID '%d'", id)
-		cont, err := confirmForm(msg)
+		cont, _ := confirmForm(msg)
 		if !cont {
 			return nil
 		}
-		err = s.Db.DeleteLocationByIdQuery(context.Background(), id)
+		err := s.Db.DeleteLocationByIdQuery(context.Background(), id)
 		return err
 	default:
-		return fmt.Errorf("Place type not recognized, could not delete.")
+		return fmt.Errorf("place type not recognized, could not delete")
 	}
 }
 
@@ -467,7 +464,7 @@ func viewAllPlaces(s *State, placeFlag string) error {
 
 		return nil
 	default:
-		return fmt.Errorf("No such place flag exists!")
+		return fmt.Errorf("no such place flag exists")
 	}
 }
 
@@ -630,8 +627,7 @@ func confirmForm(msg string) (bool, error) {
 // Flag helper functions
 
 func isPlaceTypeFlag(flag string) bool {
-	return flag == "--world" || flag == "--area" || flag == "--location" ||
-		flag == "--sublocation"
+	return flag == "--world" || flag == "--area" || flag == "--location"
 }
 
 func isPlaceCommandFlag(flag string) bool {
@@ -642,7 +638,7 @@ func isPlaceCommandFlag(flag string) bool {
 func parsePlaceFlagArg(args []string) (string, string) {
 	for i, arg := range args {
 		if isPlaceCommandFlag(arg) && (1+i) < len(args) {
-			return arg, args[i+1]
+			return arg, strings.Join(args[i+1:], " ")
 		} else if isPlaceCommandFlag(arg) {
 			return arg, ""
 		}

@@ -184,6 +184,48 @@ func (q *Queries) ViewNpcByName(
 	return &npc, nil
 }
 
+const getNpcByIdQuery = `SELECT * FROM npcs WHERE id = $1`
+
+func (q *Queries) GetNpcById(
+	ctx context.Context,
+	id int,
+) (*Npc, error) {
+	npc := Npc{}
+	row := q.Db.QueryRowContext(ctx, getNpcByIdQuery, id)
+	err := row.Scan(
+		&npc.Id,
+		&npc.Name,
+		&npc.Race,
+		&npc.Class,
+		&npc.Subclass,
+		&npc.Alignment,
+		&npc.Level,
+		&npc.Hitpoints,
+		&npc.Sex,
+		&npc.Description,
+		&npc.Languages,
+		&npc.WorldId,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &npc, nil
+}
+
+const deleteNpcByIdQuery = `DELETE FROM npcs WHERE id = $1`
+
+func (q *Queries) DeleteNpcById(
+	ctx context.Context,
+	id int,
+) error {
+	_, err := q.Db.ExecContext(ctx, deleteNpcByIdQuery, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 const searchNpcsByNameQuery = `SELECT * FROM npcs WHERE name LIKE $1`
 
 func (q *Queries) SearchNpcsByName(

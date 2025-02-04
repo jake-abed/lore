@@ -145,6 +145,8 @@ func simulateFight(monsterOne, monsterTwo dndapi.Monster) {
 	firstAttacks := first.ParseAttacks()
 	secondAttacks := second.ParseAttacks()
 
+	var winner *dndapi.Monster
+
 	for hpOne > 0 && hpTwo > 0 {
 		firstAttack := dndapi.UseRandomAttack(firstAttacks)
 		secondAttack := dndapi.UseRandomAttack(secondAttacks)
@@ -169,6 +171,10 @@ func simulateFight(monsterOne, monsterTwo dndapi.Monster) {
 			)
 		}
 		hpTwo -= firstDamage
+		if hpTwo <= 0 {
+			hpTwo = 0
+			winner = &monsterOne
+		}
 		fmt.Print(firstMessage)
 		time.Sleep(time.Millisecond * 800)
 
@@ -188,6 +194,10 @@ func simulateFight(monsterOne, monsterTwo dndapi.Monster) {
 			)
 		}
 		hpOne -= secondDamage
+		if hpOne <= 0 {
+			hpOne = 0
+			winner = &monsterTwo
+		}
 		fmt.Print(secondMessage)
 		time.Sleep(time.Millisecond * 800)
 
@@ -195,6 +205,7 @@ func simulateFight(monsterOne, monsterTwo dndapi.Monster) {
 			first.Name, hpOne, second.Name, hpTwo)
 		time.Sleep(time.Millisecond * 1000)
 	}
+	fmt.Printf("%s won the battle!\n", winner.Name)
 }
 
 func parseDamage(
