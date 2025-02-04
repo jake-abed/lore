@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/charmbracelet/huh"
 	"github.com/jake-abed/lore/internal/db"
@@ -19,7 +20,8 @@ func commandNpcs(s *State) error {
 
 	flag := npcArgs[0]
 
-	if len(npcArgs) == 1 && (flag == "-a" || flag == "-add") {
+
+	if len(npcArgs) == 1 && (flag == "-a") {
 		err := addNpc(s)
 		if err != nil {
 			fmt.Println(err)
@@ -27,8 +29,15 @@ func commandNpcs(s *State) error {
 		}
 		os.Exit(0)
 	}
+	
+	var flagArg string
+	if len(npcArgs) == 2 {
+		flagArg = npcArgs[1]
+	} else {
+		flagArg = strings.Join(npcArgs[1:], " ")
+	}
 
-	if len(npcArgs) == 2 && (flag == "-v" || flag == "--view") {
+	if len(npcArgs) >= 2 && (flag == "-v") {
 		name := npcArgs[1]
 		npc, err := s.Db.ViewNpcByName(context.Background(), name)
 		if err != nil {
@@ -37,9 +46,8 @@ func commandNpcs(s *State) error {
 		viewNpc(npc)
 	}
 
-	if len(npcArgs) == 2 && (flag == "-e" || flag == "--edit") {
-		name := npcArgs[1]
-		npc, err := s.Db.ViewNpcByName(context.Background(), name)
+	if len(npcArgs) >= 2 && (flag == "-e") {
+		npc, err := s.Db.ViewNpcByName(context.Background(), flagArg)
 		if err != nil {
 			return err
 		}
@@ -49,8 +57,8 @@ func commandNpcs(s *State) error {
 		}
 	}
 
-	if len(npcArgs) == 2 && (flag == "-s" || flag == "--search") {
-		name := "%" + npcArgs[1] + "%"
+	if len(npcArgs) >= 2 && (flag == "-s") {
+		name := "%" + flagArg + "%"
 		npcs, err := s.Db.SearchNpcsByName(
 			context.Background(),
 			name,

@@ -27,27 +27,27 @@ func BuildCommands() map[string]Command {
 		"dice": {
 			Name:        "dice",
 			Description: "Roll dice in the following format: {qtyDice}d{Die}{+/-}{modifier}.",
-			Callback: commandDice,
+			Callback:    commandDice,
 		},
 		"monsters": {
 			Name:        "monsters",
 			Description: "Get info about monsters and simulate fights.",
-			Callback: commandMonsters,
+			Callback:    commandMonsters,
 		},
 		"npcs": {
 			Name:        "npcs",
 			Description: "Add, search, edit, & view info about NPCs.",
-			Callback: commandNpcs,
+			Callback:    commandNpcs,
 		},
 		"places": {
 			Name:        "places",
 			Description: "Add, search, edit, & view worlds, areas, & locations.",
-			Callback: commandPlaces,
+			Callback:    commandPlaces,
 		},
 		"quests": {
 			Name:        "quests",
 			Description: "Add, search, edit & view quests & quest steps.",
-			Callback: commandQuests,
+			Callback:    commandQuests,
 		},
 	}
 }
