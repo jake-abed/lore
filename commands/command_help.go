@@ -9,12 +9,24 @@ func commandHelp(s *State) error {
 	commands := BuildCommands()
 
 	if len(s.Args) > 1 {
-		cmd := s.Args[1]
-		err := SingleCommandHelp(s, commands, cmd)
-		if err != nil {
-			return err
+		cmd := strings.ToLower(s.Args[1])
+		switch cmd {
+		case "monsters":
+			monstersHelp()
+			return nil
+		case "npcs":
+			npcHelp()
+			return nil
+		case "quests":
+			questsHelp()
+			return nil
+		case "places":
+			placesHelp()
+			return nil
+		case "help":
+			SingleCommandHelp(s, commands, "help")
+			return nil
 		}
-		return nil
 	}
 
 	intro := "Welcome to Lore!\n"
