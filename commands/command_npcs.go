@@ -20,7 +20,6 @@ func commandNpcs(s *State) error {
 
 	flag := npcArgs[0]
 
-
 	if len(npcArgs) == 1 && (flag == "-a") {
 		err := addNpc(s)
 		if err != nil {
@@ -29,7 +28,7 @@ func commandNpcs(s *State) error {
 		}
 		os.Exit(0)
 	}
-	
+
 	var flagArg string
 	if len(npcArgs) == 2 {
 		flagArg = npcArgs[1]
