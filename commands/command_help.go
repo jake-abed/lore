@@ -23,8 +23,10 @@ func commandHelp(s *State) error {
 		case "places":
 			placesHelp()
 			return nil
+		case "dice":
+			diceHelp()
 		case "help":
-			SingleCommandHelp(s, commands, "help")
+			helpHelp()
 			return nil
 		}
 	}
@@ -42,29 +44,10 @@ func commandHelp(s *State) error {
 	return nil
 }
 
-func SingleCommandHelp(
-	s *State,
-	commands map[string]Command,
-	cmdName string,
-) error {
+func helpHelp() {
 	intro := "Welcome to Lore!\n"
-	introMsg := fmt.Sprintf("The %s command has the following flags: ", cmdName)
+	introMsg := fmt.Sprintf("The %s command has the following flags: ", "help")
 	fmt.Println(header.Render(intro + introMsg))
-	commandDiv := ""
-	cmd, ok := commands[cmdName]
-	if !ok {
-		return fmt.Errorf("That command does not exist in Lore!")
-	}
-
-	if cmd.Name == "help" {
-		commandDiv += "The help subcommand helps you. It's helping right now!"
-	}
-
-	for key, val := range cmd.Flags {
-		name := bold.Render(fmt.Sprintf("%-13s", key))
-		desc := italic.Render(val)
-		commandDiv += fmt.Sprintf("%s <==> %v\n", name, desc)
-	}
+	commandDiv := "The help subcommand helps you. It's helping right now!"
 	fmt.Println(commandBox.Render(strings.TrimRight(commandDiv, "\n")))
-	return nil
 }

@@ -12,7 +12,12 @@ func commandDice(s *State) error {
 	diceArgs := s.Args[1:]
 
 	if len(diceArgs) == 0 {
-		return fmt.Errorf("The dice command requires at least one argument!")
+		return fmt.Errorf("the dice command requires at least one argument")
+	}
+
+	if len(diceArgs) == 1 && diceArgs[0] == "help" {
+		diceHelp()
+		return nil
 	}
 
 	var flag string
@@ -27,7 +32,7 @@ func commandDice(s *State) error {
 	}
 
 	if !strings.Contains(diceExpression, "d") {
-		return fmt.Errorf("Invalid Dice Expression: %s", diceExpression)
+		return fmt.Errorf("nvalid Dice Expression: %s", diceExpression)
 	}
 
 	switch flag {
@@ -53,11 +58,26 @@ func commandDice(s *State) error {
 			msg = bold.Render(msg)
 			fmt.Println(msg, roll)
 		}
-		msg := fmt.Sprintf("Sum of all rolls & modifier: ")
+		msg := "Sum of all rolls & modifier: "
 		msg = bold.Render(msg)
 		fmt.Println(msg, sum+int(modifier))
 	default:
-		return fmt.Errorf("Unknown flag for dice subcommand!")
+		return fmt.Errorf("unknown flag for dice subcommand")
 	}
 	return nil
+}
+
+func diceHelp() {
+	intro := "Lore Dice Help\n"
+	introTip := "Dice subcommands information"
+	fmt.Println(header.Render(intro + introTip))
+	all := bold.Render("  *** dice -a <monster-1> <monster-2> | ")
+	allMessage := "Roll all the dice of an expression together returning the result."
+	fmt.Println(all + allMessage)
+	individual := bold.Render("  *** dice -i <dice-expression> | ")
+	individualMessage := "Roll each die of an expression one at a time."
+	fmt.Println(individual + individualMessage)
+	example := bold.Render("  *** Examples | ")
+	exampleMessage := "d20, 1d6, 2d12+1, 1d4-1, 3d6+8, 5d20+12, 80d100-50, etc.\n"
+	fmt.Println(example + exampleMessage)
 }
