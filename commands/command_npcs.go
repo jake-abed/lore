@@ -13,9 +13,9 @@ import (
 
 func commandNpcs(s *State) error {
 	npcArgs := s.Args[1:]
-	if len(npcArgs) < 1 {
+	if len(npcArgs) < 1 || npcArgs[0] == "help" {
 		npcHelp()
-		os.Exit(0)
+		return nil
 	}
 
 	flag := npcArgs[0]
@@ -26,7 +26,7 @@ func commandNpcs(s *State) error {
 			fmt.Println(err)
 			os.Exit(1)
 		}
-		os.Exit(0)
+		return nil
 	}
 
 	var flagArg string
@@ -43,6 +43,8 @@ func commandNpcs(s *State) error {
 			return err
 		}
 		viewNpc(npc)
+
+		return nil
 	}
 
 	if len(npcArgs) >= 2 && (flag == "-e") {
@@ -54,6 +56,8 @@ func commandNpcs(s *State) error {
 		if err != nil {
 			return err
 		}
+
+		return nil
 	}
 
 	if len(npcArgs) >= 2 && (flag == "-s") {
@@ -74,8 +78,41 @@ func commandNpcs(s *State) error {
 			fmt.Printf("*** Name: %s | Id: %d | Race: %s | Class: %s\n",
 				npc.Name, npc.Id, npc.Race, npc.Class)
 		}
+
+		return nil
 	}
-	return nil
+
+	if len(npcArgs) >= 2 && (flag == "-d") {
+		id, err := strconv.ParseInt(flagArg, 10, 64)
+		if err != nil {
+			return nil
+		}
+
+		npc, err := s.Db.GetNpcById(context.Background(), int(id))
+		if err != nil {
+			if strings.Contains(err.Error(), "no rows") {
+				return fmt.Errorf("can't delete - npc not found")
+			} else {
+				return err
+			}
+		}
+		msg := fmt.Sprintf("delete %s", npc.Name)
+		proceed, err := confirmForm(msg)
+		if !proceed {
+			return err
+		}
+
+		err = s.Db.DeleteNpcById(context.Background(), int(id))
+		if err != nil {
+			return nil
+		}
+
+		fmt.Printf("Npc: %s successfully deleted.\n", npc.Name)
+
+		return nil
+	}
+
+	return fmt.Errorf("no such flag as %s for npcs command", flag)
 }
 
 func npcHelp() {
@@ -112,7 +149,7 @@ func addNpc(s *State) error {
 	worldCount, _ := s.Db.WorldCount(context.Background())
 
 	if worldCount == 0 {
-		return fmt.Errorf("You cannot create NPCs without first having a world to add to!")
+		return fmt.Errorf("you cannot create NPCs without first having a world to add to")
 	}
 
 	npcForm := huh.NewForm(
@@ -122,7 +159,7 @@ func addNpc(s *State) error {
 				Value(&name).
 				Validate(func(s string) error {
 					if s == "" {
-						return fmt.Errorf("You have to enter a name!")
+						return fmt.Errorf("you have to enter a name")
 					}
 					return nil
 				}),
@@ -170,7 +207,7 @@ func addNpc(s *State) error {
 				Validate(func(s string) error {
 					_, err := strconv.ParseInt(s, 10, 64)
 					if err != nil {
-						return fmt.Errorf("%s is not a number!", s)
+						return fmt.Errorf("%s is not a number", s)
 					}
 					return nil
 				}),
@@ -181,7 +218,7 @@ func addNpc(s *State) error {
 				Validate(func(s string) error {
 					_, err := strconv.ParseInt(s, 10, 64)
 					if err != nil {
-						return fmt.Errorf("%s is not a number!", s)
+						return fmt.Errorf("%s is not a number", s)
 					}
 					return nil
 				}),
@@ -239,7 +276,7 @@ func addNpc(s *State) error {
 }
 
 func viewNpc(npc *db.Npc) {
-	intro := fmt.Sprintf("Info About NPC:\n")
+	intro := "Info About NPC:\n"
 	introTip := fmt.Sprintf("%s // Id: %d", npc.Name, npc.Id)
 	fmt.Println(header.Render(intro + introTip))
 	fmt.Printf(" Name: %s\n", npc.Name)

@@ -87,7 +87,7 @@ func (q *Queries) UpdateWorldById(
 	return &updatedWorld, nil
 }
 
-const deleteWorldByIdQuery = `DELETE FROM worlds where id = $1`
+const deleteWorldByIdQuery = `DELETE FROM worlds WHERE id = $1`
 
 func (q *Queries) DeleteWorldByIdQuery(ctx context.Context, id int) error {
 	_, err := q.Db.ExecContext(ctx, deleteWorldByIdQuery, id)
