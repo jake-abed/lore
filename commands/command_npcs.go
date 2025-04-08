@@ -125,7 +125,7 @@ func npcHelp() {
 	edit := bold.Render("  *** npcs -e <npc-name> | ")
 	editMessage := "Edit an NPC by name."
 	fmt.Println(edit + editMessage)
-	delete := bold.Render(" *** npcs -d <npc-id> | ")
+	delete := bold.Render("  *** npcs -d <npc-id> | ")
 	deleteMsg := "Delete an NPC by ID."
 	fmt.Println(delete + deleteMsg)
 	search := bold.Render("  *** npcs -s <npc-name> | ")
