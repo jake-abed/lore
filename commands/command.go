@@ -49,5 +49,10 @@ func BuildCommands() map[string]Command {
 			Description: "Add, search, edit & view quests & quest steps.",
 			Callback:    commandQuests,
 		},
+		"connect": {
+			Name:        "connect",
+			Description: "Connect quests, npcs, and places together.",
+			Callback:    commandConnect,
+		},
 	}
 }
