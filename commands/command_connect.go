@@ -118,14 +118,58 @@ func connectNpc(s *State, npcArg, secondArg ConnectArg) error {
 		)
 		return nil
 	case "--area":
-		//todo
+		area, err := s.Db.GetAreaById(context.Background(), secondArg.Id)
+		if err != nil {
+			return fmt.Errorf("no such world in database: %w", err)
+		}
+
+		_, err = s.Db.CreateNpcAreaConnection(
+			context.Background(),
+			params,
+		)
+		if err != nil {
+			return fmt.Errorf(
+				"could not connect npc_name=%s(id=%d) to location_id=%d - error: %w",
+				npc.Name,
+				npc.Id,
+				secondArg.Id,
+				err,
+			)
+		}
+
+		printSuccessMessage(
+			SuccessEntry{TypeName: "NPC", Name: npc.Name, Id: npc.Id},
+			SuccessEntry{TypeName: "Area", Name: area.Name, Id: area.Id},
+		)
+		return nil
 	case "--location":
-		//todo
+		location, err := s.Db.GetLocationById(context.Background(), secondArg.Id)
+		if err != nil {
+			return fmt.Errorf("no such world in database: %w", err)
+		}
+
+		_, err = s.Db.CreateNpcAreaConnection(
+			context.Background(),
+			params,
+		)
+		if err != nil {
+			return fmt.Errorf(
+				"could not connect npc_name=%s(id=%d) to location_id=%d - error: %w",
+				npc.Name,
+				npc.Id,
+				secondArg.Id,
+				err,
+			)
+		}
+
+		printSuccessMessage(
+			SuccessEntry{TypeName: "NPC", Name: npc.Name, Id: npc.Id},
+			SuccessEntry{TypeName: "Location", Name: location.Name, Id: location.Id},
+		)
+		return nil
 	default:
 		return fmt.Errorf("unknown Type for second argument: %s", secondArg.Type)
 	}
-
-	return nil
 }
 
 func connectQuest(s *State, questArg, secondArg ConnectArg) error {
