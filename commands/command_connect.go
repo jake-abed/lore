@@ -1,10 +1,13 @@
 package commands
 
 import (
+	"context"
 	"fmt"
 	"slices"
 	"strconv"
 	"strings"
+
+	"github.com/jake-abed/lore/internal/db"
 )
 
 var validConnectTypes = [5]string{
@@ -41,20 +44,91 @@ func commandConnect(s *State) error {
 
 	switch firstArg.Type {
 	case "--npc":
-		return connectNpc(firstArg, secondArg)
+		return connectNpc(s, firstArg, secondArg)
 	case "--quest":
-		return connectQuest(firstArg, secondArg)
+		return connectQuest(s, firstArg, secondArg)
 	default:
 		return fmt.Errorf("first connection arg must be place or npc")
 	}
 }
 
-func connectNpc(npcArg, secondArg ConnectArg) error {
-	// Implement Connect NPC
+func connectNpc(s *State, npcArg, secondArg ConnectArg) error {
+	if npcArg.Type != "--npc" {
+		return fmt.Errorf("first argument must be an npc")
+	}
+	npc, err := s.Db.GetNpcById(context.Background(), npcArg.Id)
+	if err != nil {
+		return fmt.Errorf("no such npc in database: %w", err)
+	}
+
+	params := db.ConnectionParams{
+		FirstId:  npc.Id,
+		SecondId: secondArg.Id,
+	}
+
+	switch secondArg.Type {
+	case "--quest":
+		quest, err := s.Db.GetQuestByIdQuery(context.Background(), secondArg.Id)
+		if err != nil {
+			return fmt.Errorf("no such quest in database: %w", err)
+		}
+
+		_, err = s.Db.CreateNpcQuestConnection(
+			context.Background(),
+			params,
+		)
+		if err != nil {
+			return fmt.Errorf(
+				"could not connect npc_name=%s(id=%d) to quest_id=%d - error: %w",
+				npc.Name,
+				npc.Id,
+				secondArg.Id,
+				err,
+			)
+		}
+
+		printSuccessMessage(
+			SuccessEntry{TypeName: "NPC", Name: npc.Name, Id: npc.Id},
+			SuccessEntry{TypeName: "Quest", Name: quest.Name, Id: quest.Id},
+		)
+		return nil
+	case "--world":
+		world, err := s.Db.GetWorldById(context.Background(), secondArg.Id)
+		if err != nil {
+			return fmt.Errorf("no such world in database: %w", err)
+		}
+
+		_, err = s.Db.CreateNpcWorldConnection(
+			context.Background(),
+			params,
+		)
+		if err != nil {
+			return fmt.Errorf(
+				"could not connect npc_name=%s(id=%d) to world_id=%d - error: %w",
+				npc.Name,
+				npc.Id,
+				secondArg.Id,
+				err,
+			)
+		}
+
+		printSuccessMessage(
+			SuccessEntry{TypeName: "NPC", Name: npc.Name, Id: npc.Id},
+			SuccessEntry{TypeName: "World", Name: world.Name, Id: world.Id},
+		)
+		return nil
+	case "--area":
+		//todo
+	case "--location":
+		//todo
+	default:
+		return fmt.Errorf("unknown Type for second argument: %s", secondArg.Type)
+	}
+
 	return nil
 }
 
-func connectQuest(questArg, secondArg ConnectArg) error {
+func connectQuest(s *State, questArg, secondArg ConnectArg) error {
 	// Implement Connect Quest
 	return nil
 }
@@ -85,6 +159,27 @@ func validateConnectType(possibleType string) (string, error) {
 	}
 
 	return possibleType, nil
+}
+
+type SuccessEntry struct {
+	Name     string
+	TypeName string
+	Id       int
+}
+
+func printSuccessMessage(entryOne, entryTwo SuccessEntry) {
+	intro := "Success!"
+	fmt.Println(header.Render(intro))
+
+	idOneMsg := italic.Render(fmt.Sprintf("(ID: %d)", entryOne.Id))
+	idTwoMsg := italic.Render(fmt.Sprintf("(ID: %d)", entryTwo.Id))
+
+	msg := fmt.Sprintf("%s %s %s connected to %s %s %s",
+		bold.Render(entryOne.TypeName), bold.Render(entryOne.Name),
+		idOneMsg, bold.Render(entryTwo.TypeName),
+		bold.Render(entryTwo.Name), idTwoMsg)
+
+	fmt.Println(msg)
 }
 
 func connectHelp() {
