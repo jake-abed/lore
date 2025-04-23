@@ -88,6 +88,7 @@ func (q *Queries) GetLocationByName(
 const getLocationByIdQuery = `
 SELECT * FROM locations WHERE locations.id = $1 LIMIT 1
 `
+
 func (q *Queries) GetLocationById(
 	ctx context.Context,
 	id int,

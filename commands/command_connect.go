@@ -68,7 +68,7 @@ func connectNpc(s *State, npcArg, secondArg ConnectArg) error {
 
 	switch secondArg.Type {
 	case "--quest":
-		quest, err := s.Db.GetQuestByIdQuery(context.Background(), secondArg.Id)
+		quest, err := s.Db.GetQuestById(context.Background(), secondArg.Id)
 		if err != nil {
 			return fmt.Errorf("no such quest in database: %w", err)
 		}
@@ -116,7 +116,6 @@ func connectNpc(s *State, npcArg, secondArg ConnectArg) error {
 			SuccessEntry{TypeName: "NPC", Name: npc.Name, Id: npc.Id},
 			SuccessEntry{TypeName: "World", Name: world.Name, Id: world.Id},
 		)
-		return nil
 	case "--area":
 		area, err := s.Db.GetAreaById(context.Background(), secondArg.Id)
 		if err != nil {
@@ -141,7 +140,6 @@ func connectNpc(s *State, npcArg, secondArg ConnectArg) error {
 			SuccessEntry{TypeName: "NPC", Name: npc.Name, Id: npc.Id},
 			SuccessEntry{TypeName: "Area", Name: area.Name, Id: area.Id},
 		)
-		return nil
 	case "--location":
 		location, err := s.Db.GetLocationById(context.Background(), secondArg.Id)
 		if err != nil {
@@ -166,14 +164,133 @@ func connectNpc(s *State, npcArg, secondArg ConnectArg) error {
 			SuccessEntry{TypeName: "NPC", Name: npc.Name, Id: npc.Id},
 			SuccessEntry{TypeName: "Location", Name: location.Name, Id: location.Id},
 		)
-		return nil
 	default:
 		return fmt.Errorf("unknown Type for second argument: %s", secondArg.Type)
 	}
+
+	return nil
 }
 
 func connectQuest(s *State, questArg, secondArg ConnectArg) error {
-	// Implement Connect Quest
+	if questArg.Type != "--quest" {
+		return fmt.Errorf("first argument must be a quest")
+	}
+	quest, err := s.Db.GetQuestById(context.Background(), questArg.Id)
+	if err != nil {
+		return fmt.Errorf("no such quest in database: %w", err)
+	}
+
+	params := db.ConnectionParams{
+		FirstId:  quest.Id,
+		SecondId: secondArg.Id,
+	}
+
+	switch secondArg.Type {
+	case "--npc":
+		npc, err := s.Db.GetNpcById(context.Background(), secondArg.Id)
+		if err != nil {
+			return fmt.Errorf("no such npc in database: %w", err)
+		}
+
+		// Basically, swap the parameter order because Db.CreateNpcQuestConnection
+		// expects the Npc ID to be under FirstId.
+		params.FirstId = secondArg.Id
+		params.SecondId = quest.Id
+
+		_, err = s.Db.CreateNpcQuestConnection(
+			context.Background(),
+			params,
+		)
+		if err != nil {
+			return fmt.Errorf(
+				"could not connect quest_name=%s(id=%d) to npc_id=%d - error: %w",
+				quest.Name,
+				quest.Id,
+				secondArg.Id,
+				err,
+			)
+		}
+
+		printSuccessMessage(
+			SuccessEntry{TypeName: "Quest", Name: quest.Name, Id: quest.Id},
+			SuccessEntry{TypeName: "NPC", Name: npc.Name, Id: npc.Id},
+		)
+	case "--world":
+		world, err := s.Db.GetWorldById(context.Background(), secondArg.Id)
+		if err != nil {
+			return fmt.Errorf("no such world in database: %w", err)
+		}
+
+		_, err = s.Db.CreateQuestWorldConnection(
+			context.Background(),
+			params,
+		)
+		if err != nil {
+			return fmt.Errorf(
+				"could not connect quest_name=%s(id=%d) to world_id=%d - error: %w",
+				quest.Name,
+				quest.Id,
+				secondArg.Id,
+				err,
+			)
+		}
+
+		printSuccessMessage(
+			SuccessEntry{TypeName: "Quest", Name: quest.Name, Id: quest.Id},
+			SuccessEntry{TypeName: "World", Name: world.Name, Id: world.Id},
+		)
+	case "--area":
+		area, err := s.Db.GetAreaById(context.Background(), secondArg.Id)
+		if err != nil {
+			return fmt.Errorf("no such area in database: %w", err)
+		}
+
+		_, err = s.Db.CreateQuestAreaConnection(
+			context.Background(),
+			params,
+		)
+		if err != nil {
+			return fmt.Errorf(
+				"could not connect quest_name=%s(id=%d) to world_id=%d - error: %w",
+				quest.Name,
+				quest.Id,
+				secondArg.Id,
+				err,
+			)
+		}
+
+		printSuccessMessage(
+			SuccessEntry{TypeName: "Quest", Name: quest.Name, Id: quest.Id},
+			SuccessEntry{TypeName: "Area", Name: area.Name, Id: area.Id},
+		)
+	case "--location":
+		location, err := s.Db.GetAreaById(context.Background(), secondArg.Id)
+		if err != nil {
+			return fmt.Errorf("no such location in database: %w", err)
+		}
+
+		_, err = s.Db.CreateQuestLocationConnection(
+			context.Background(),
+			params,
+		)
+		if err != nil {
+			return fmt.Errorf(
+				"could not connect quest_name=%s(id=%d) to location_id=%d - error: %w",
+				quest.Name,
+				quest.Id,
+				secondArg.Id,
+				err,
+			)
+		}
+
+		printSuccessMessage(
+			SuccessEntry{TypeName: "Quest", Name: quest.Name, Id: quest.Id},
+			SuccessEntry{TypeName: "Location", Name: location.Name, Id: location.Id},
+		)
+	default:
+		return fmt.Errorf("unknown Type for second argument: %s", secondArg.Type)
+	}
+
 	return nil
 }
 
