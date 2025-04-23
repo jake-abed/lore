@@ -225,3 +225,40 @@ func (q *Queries) CreateQuestLocationConnection(
 
 	return &questLocation, nil
 }
+
+// Get Functions
+
+const getNpcConnectedQuestsQuery = `
+SELECT q.* FROM quests AS q
+	INNER JOIN npc_quests AS nq ON nq.npc_id
+	WHERE nq.npc_id = $1
+`
+
+func (q *Queries) GetNpcConnectedQuests(
+	ctx context.Context,
+	npcId int,
+) ([]*Quest, error) {
+	rows, err := q.Db.QueryContext(
+		context.Background(),
+		getNpcConnectedQuestsQuery,
+		npcId,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	quests := []*Quest{}
+
+	for rows.Next() {
+		quest := Quest{}
+
+		err := scanQuestRows(rows, &quest)
+		if err != nil {
+			return nil, err
+		}
+
+		quests = append(quests, &quest)
+	}
+
+	return quests, nil
+}

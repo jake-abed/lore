@@ -42,7 +42,7 @@ func commandNpcs(s *State) error {
 		if err != nil {
 			return err
 		}
-		viewNpc(npc)
+		viewNpc(s, npc)
 
 		return nil
 	}
@@ -273,12 +273,14 @@ func addNpc(s *State) error {
 
 	fmt.Printf("Success! %s created.\n", added.Name)
 
-	viewNpc(added)
+	viewNpc(s, added)
 
 	return nil
 }
 
-func viewNpc(npc *db.Npc) {
+func viewNpc(s *State, npc *db.Npc) {
+	connectedQuests := s.Db.GetNpcConnectedQuests(context.Background(), npc.Id)
+
 	intro := "Info About NPC:\n"
 	introTip := fmt.Sprintf("%s // Id: %d", npc.Name, npc.Id)
 	fmt.Println(header.Render(intro + introTip))
@@ -423,7 +425,7 @@ func editNpc(npc *db.Npc, s *State) error {
 		return err
 	}
 
-	viewNpc(res)
+	viewNpc(s, res)
 
 	return nil
 }
