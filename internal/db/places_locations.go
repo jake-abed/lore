@@ -85,6 +85,33 @@ func (q *Queries) GetLocationByName(
 	return &location, nil
 }
 
+const getLocationByIdQuery = `SELECT * FROM locations WHERE id = $1`
+
+func (q *Queries) GetLocationById(
+	ctx context.Context,
+	id int,
+) (*Location, error) {
+	location := Location{}
+	row := q.Db.QueryRowContext(
+		ctx,
+		getLocationByIdQuery,
+		id,
+	)
+
+	err := row.Scan(
+		&location.Id,
+		&location.Name,
+		&location.Type,
+		&location.Desc,
+		&location.AreaId,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &location, nil
+}
+
 const updateLocationByIdQuery = `UPDATE locations
 	SET name = $1, type = $2, description = $3, area_id = $4 WHERE id = $5
 	RETURNING *

@@ -85,6 +85,33 @@ func (q *Queries) GetAreaByName(
 	return &area, nil
 }
 
+const getAreaByIdQuery = `SELECT * FROM areas WHERE id = $1`
+
+func (q *Queries) GetAreaById(
+	ctx context.Context,
+	id int,
+) (*Area, error) {
+	area := Area{}
+	row := q.Db.QueryRowContext(
+		ctx,
+		getAreaByIdQuery,
+		id,
+	)
+
+	err := row.Scan(
+		&area.Id,
+		&area.Name,
+		&area.Type,
+		&area.Desc,
+		&area.WorldId,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &area, nil
+}
+
 const getAllAreasQuery = `SELECT * FROM areas`
 
 func (q *Queries) GetAllAreas(ctx context.Context) ([]*Area, error) {

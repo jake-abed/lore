@@ -80,7 +80,7 @@ const getQuestById = `
 SELECT * FROM quests WHERE id = $1 LIMIT 1
 `
 
-func (q *Queries) GetQuestByIdQuery(
+func (q *Queries) GetQuestById(
 	ctx context.Context,
 	id int,
 ) (*Quest, error) {

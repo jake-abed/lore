@@ -126,7 +126,7 @@ func updateQuest(s *State, id string) (*db.Quest, error) {
 
 	i := int(id64)
 
-	quest, err := s.Db.GetQuestByIdQuery(context.Background(), i)
+	quest, err := s.Db.GetQuestById(context.Background(), i)
 	if err != nil {
 		return nil, err
 	}
@@ -164,7 +164,7 @@ func getQuestById(s *State, id string) (*db.Quest, error) {
 
 	i := int(id64)
 
-	quest, err := s.Db.GetQuestByIdQuery(context.Background(), i)
+	quest, err := s.Db.GetQuestById(context.Background(), i)
 	if err != nil {
 		return nil, err
 	}
@@ -203,7 +203,7 @@ func deleteQuest(s *State, id string) error {
 
 	i := int(id64)
 
-	quest, err := s.Db.GetQuestByIdQuery(context.Background(), i)
+	quest, err := s.Db.GetQuestById(context.Background(), i)
 	if err != nil {
 		return fmt.Errorf("Quest ID=%d not found!", i)
 	}
