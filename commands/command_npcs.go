@@ -279,7 +279,21 @@ func addNpc(s *State) error {
 }
 
 func viewNpc(s *State, npc *db.Npc) {
-	connectedQuests := s.Db.GetNpcConnectedQuests(context.Background(), npc.Id)
+	connectedQuests, err := s.Db.GetNpcConnectedQuests(
+		context.Background(),
+		npc.Id,
+	)
+	if err != nil {
+		fmt.Println(ErrorMsg.Render(err.Error()))
+	}
+
+	connectedAreas, err := s.Db.GetNpcConnectedAreas(
+		context.Background(),
+		npc.Id,
+	)
+	if err != nil {
+		fmt.Println(ErrorMsg.Render(err.Error()))
+	}
 
 	intro := "Info About NPC:\n"
 	introTip := fmt.Sprintf("%s // Id: %d", npc.Name, npc.Id)
@@ -293,6 +307,38 @@ func viewNpc(s *State, npc *db.Npc) {
 	fmt.Printf(" Description : %s\n", npc.Description)
 	fmt.Printf(" Level: %d\n", npc.Level)
 	fmt.Printf(" Hitpoints: %d\n", npc.Hitpoints)
+	fmt.Printf(" World Id: %d\n", npc.WorldId)
+	fmt.Printf(" Connected Quests: ")
+
+	if len(connectedQuests) == 0 {
+		fmt.Printf("None\n")
+	}
+
+	for i, quest := range connectedQuests {
+		fmt.Printf("%s (ID: %d)", quest.Name, quest.Id)
+
+		if i < len(connectedQuests)-1 {
+			fmt.Printf(", ")
+		} else {
+			fmt.Printf("\n")
+		}
+	}
+
+	fmt.Printf(" Connected Areas: ")
+
+	if len(connectedAreas) == 0 {
+		fmt.Printf("None\n")
+	}
+
+	for i, area := range connectedAreas {
+		fmt.Printf("%s (ID: %d)", area.Name, area.Id)
+
+		if i < len(connectedAreas)-1 {
+			fmt.Printf(", ")
+		} else {
+			fmt.Printf("\n")
+		}
+	}
 }
 
 func editNpc(npc *db.Npc, s *State) error {

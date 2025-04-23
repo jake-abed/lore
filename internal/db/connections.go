@@ -230,7 +230,7 @@ func (q *Queries) CreateQuestLocationConnection(
 
 const getNpcConnectedQuestsQuery = `
 SELECT q.* FROM quests AS q
-	INNER JOIN npc_quests AS nq ON nq.npc_id
+	INNER JOIN npcs_quests AS nq ON nq.quest_id = q.id
 	WHERE nq.npc_id = $1
 `
 
@@ -261,4 +261,39 @@ func (q *Queries) GetNpcConnectedQuests(
 	}
 
 	return quests, nil
+}
+
+const getNpcConnectedAreasQuery = `
+SELECT a.* FROM areas AS a
+	INNER JOIN npcs_areas AS na ON na.area_id = a.id
+	WHERE na.npc_id = $1
+`
+
+func (q *Queries) GetNpcConnectedAreas(
+	ctx context.Context,
+	npcId int,
+) ([]*Area, error) {
+	rows, err := q.Db.QueryContext(
+		context.Background(),
+		getNpcConnectedAreasQuery,
+		npcId,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	areas := []*Area{}
+
+	for rows.Next() {
+		area := Area{}
+
+		err := scanAreaRows(rows, &area)
+		if err != nil {
+			return nil, err
+		}
+
+		areas = append(areas, &area)
+	}
+
+	return areas, nil
 }
