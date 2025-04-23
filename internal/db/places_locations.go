@@ -85,9 +85,7 @@ func (q *Queries) GetLocationByName(
 	return &location, nil
 }
 
-const getLocationByIdQuery = `
-SELECT * FROM locations WHERE locations.id = $1 LIMIT 1
-`
+const getLocationByIdQuery = `SELECT * FROM locations WHERE id = $1`
 
 func (q *Queries) GetLocationById(
 	ctx context.Context,
@@ -96,7 +94,7 @@ func (q *Queries) GetLocationById(
 	location := Location{}
 	row := q.Db.QueryRowContext(
 		ctx,
-		getLocationByNameQuery,
+		getLocationByIdQuery,
 		id,
 	)
 

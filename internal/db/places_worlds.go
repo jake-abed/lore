@@ -62,8 +62,7 @@ func (q *Queries) GetWorldByName(
 	return &world, nil
 }
 
-const getWorldByIdQuery = `SELECT * FROM worlds
-WHERE worlds.id = $1 LIMIT 1`
+const getWorldByIdQuery = `SELECT * FROM worlds WHERE id = $1`
 
 func (q *Queries) GetWorldById(
 	ctx context.Context,

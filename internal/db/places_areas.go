@@ -85,7 +85,7 @@ func (q *Queries) GetAreaByName(
 	return &area, nil
 }
 
-const getAreaByIdQuery = `SELECT * FROM areas WHERE areas.id = $1 LIMIT 1`
+const getAreaByIdQuery = `SELECT * FROM areas WHERE id = $1`
 
 func (q *Queries) GetAreaById(
 	ctx context.Context,
@@ -94,7 +94,7 @@ func (q *Queries) GetAreaById(
 	area := Area{}
 	row := q.Db.QueryRowContext(
 		ctx,
-		getAreaByNameQuery,
+		getAreaByIdQuery,
 		id,
 	)
 

@@ -117,9 +117,10 @@ func connectNpc(s *State, npcArg, secondArg ConnectArg) error {
 			SuccessEntry{TypeName: "World", Name: world.Name, Id: world.Id},
 		)
 	case "--area":
+		fmt.Println(secondArg.Id)
 		area, err := s.Db.GetAreaById(context.Background(), secondArg.Id)
 		if err != nil {
-			return fmt.Errorf("no such world in database: %w", err)
+			return fmt.Errorf("no such area in database: %w", err)
 		}
 
 		_, err = s.Db.CreateNpcAreaConnection(
