@@ -297,3 +297,38 @@ func (q *Queries) GetNpcConnectedAreas(
 
 	return areas, nil
 }
+
+const getQuestConnectedNpcsQuery = `
+SELECT q.* FROM quests AS q
+	INNER JOIN npcs_quests AS nq ON nq.quest_id = q.id
+	WHERE nq.quest_id = $1
+`
+
+func (q *Queries) GetQuestConnectedNpcs(
+	ctx context.Context,
+	questId int,
+) ([]*Npc, error) {
+	rows, err := q.Db.QueryContext(
+		context.Background(),
+		getQuestConnectedNpcsQuery,
+		questId,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	npcs := []*Npc{}
+
+	for rows.Next() {
+		npc := Npc{}
+
+		err := scanNpcRows(rows, &npc)
+		if err != nil {
+			return nil, err
+		}
+
+		npcs = append(npcs, &npc)
+	}
+
+	return npcs, nil
+}

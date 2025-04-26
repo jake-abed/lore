@@ -31,7 +31,7 @@ func commandQuests(s *State) error {
 			return err
 		}
 
-		printQuest(quest)
+		printQuest(s, quest)
 
 		return nil
 	case "-e":
@@ -40,7 +40,7 @@ func commandQuests(s *State) error {
 			return err
 		}
 
-		printQuest(quest)
+		printQuest(s, quest)
 
 		return nil
 	case "-s":
@@ -60,7 +60,7 @@ func commandQuests(s *State) error {
 			return err
 		}
 
-		printQuest(quest)
+		printQuest(s, quest)
 
 		return nil
 	case "-va":
@@ -227,7 +227,12 @@ func deleteQuest(s *State, id string) error {
 
 // Print functions
 
-func printQuest(q *db.Quest) {
+func printQuest(s *State, q *db.Quest) {
+	npcs, err := s.Db.GetQuestConnectedNpcs(context.Background(), q.Id)
+	if err != nil {
+		fmt.Println(ErrorMsg.Render("Database Error: " + err.Error()))
+	}
+
 	var started string
 	var finished string
 
