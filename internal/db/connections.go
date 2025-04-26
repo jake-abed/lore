@@ -299,8 +299,8 @@ func (q *Queries) GetNpcConnectedAreas(
 }
 
 const getQuestConnectedNpcsQuery = `
-SELECT q.* FROM quests AS q
-	INNER JOIN npcs_quests AS nq ON nq.quest_id = q.id
+SELECT n.* FROM npcs AS n
+	INNER JOIN npcs_quests AS nq ON nq.npc_id = n.id
 	WHERE nq.quest_id = $1
 `
 
@@ -331,4 +331,39 @@ func (q *Queries) GetQuestConnectedNpcs(
 	}
 
 	return npcs, nil
+}
+
+const getQuestConnectedAreasQuery = `
+SELECT a.* FROM areas AS a
+	INNER JOIN quests_areas AS qa ON qa.area_id = w.id
+	WHERE qa.quest_id = $1
+`
+
+func (q *Queries) GetQuestConnectedAreas(
+	ctx context.Context,
+	questId int,
+) ([]*Area, error) {
+	rows, err := q.Db.QueryContext(
+		context.Background(),
+		getQuestConnectedAreasQuery,
+		questId,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	areas := []*Area{}
+
+	for rows.Next() {
+		area := Area{}
+
+		err := scanAreaRows(rows, &area)
+		if err != nil {
+			return nil, err
+		}
+
+		areas = append(areas, &area)
+	}
+
+	return areas, nil
 }

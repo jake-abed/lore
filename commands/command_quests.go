@@ -233,6 +233,11 @@ func printQuest(s *State, q *db.Quest) {
 		fmt.Println(ErrorMsg.Render("Database Error: " + err.Error()))
 	}
 
+	areas, err := s.Db.GetQuestConnectedAreas(context.Background(), q.Id)
+	if err != nil {
+		fmt.Println(ErrorMsg.Render("Database Error: " + err.Error()))
+	}
+
 	var started string
 	var finished string
 
@@ -260,6 +265,33 @@ func printQuest(s *State, q *db.Quest) {
 		fmt.Sprintf("%d", q.Level))
 	fmt.Println(bold.Render("Belongs to World Id: ") +
 		fmt.Sprintf("%d", q.WorldId))
+
+	// Connection Messages
+	fmt.Printf(bold.Render("Connected NPCs: "))
+	if len(npcs) == 0 {
+		fmt.Printf("None\n")
+	}
+	for i, npc := range npcs {
+		if i == len(npcs)-1 {
+			fmt.Printf("%s (ID: %d)\n", npc.Name, npc.Id)
+		} else {
+			fmt.Printf("%s (ID: %d), ", npc.Name, npc.Id)
+		}
+	}
+
+	fmt.Printf(bold.Render("Connected Areas: "))
+	if len(npcs) == 0 {
+		fmt.Printf("None\n")
+	}
+	for i, area := range areas {
+		if i == len(areas)-1 {
+			fmt.Printf("%s (ID: %d)\n", area.Name, area.Id)
+		} else {
+			fmt.Printf("%s (ID: %d), ", area.Name, area.Id)
+		}
+	}
+
+	// Print Status Messages
 	fmt.Println(started)
 	fmt.Println(finished)
 }
