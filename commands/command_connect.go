@@ -147,7 +147,7 @@ func connectNpc(s *State, npcArg, secondArg ConnectArg) error {
 			return fmt.Errorf("no such world in database: %w", err)
 		}
 
-		_, err = s.Db.CreateNpcAreaConnection(
+		_, err = s.Db.CreateNpcLocationConnection(
 			context.Background(),
 			params,
 		)
