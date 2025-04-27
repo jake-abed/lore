@@ -11,29 +11,30 @@ var (
 	white = lipgloss.Color("#F1F1F1")
 	pink  = lipgloss.Color("168")
 
-	bold = lipgloss.NewStyle().
+	baseStyle = lipgloss.NewStyle().MarginLeft(1)
+
+	bold = baseStyle.
 		Bold(true).
 		Foreground(pink)
 
-	italic = lipgloss.NewStyle().
+	italic = baseStyle.
 		Italic(true)
 
-	ErrorMsg = lipgloss.NewStyle().
+	ErrorMsg = baseStyle.
 			Foreground(pink).
 			BorderStyle(lipgloss.RoundedBorder()).
 			Padding(1, 2).
 			BorderForeground(red)
 
-	header = lipgloss.NewStyle().
+	header = baseStyle.
 		Bold(true).
 		Foreground(white).
 		Background(red).
-		Margin(0).
 		Padding(1, 2).
 		BorderStyle(lipgloss.RoundedBorder()).
 		BorderForeground(white)
 
-	commandBox = lipgloss.NewStyle().
+	commandBox = baseStyle.
 			BorderStyle(lipgloss.RoundedBorder()).
 			BorderForeground(red).
 			Padding(1, 2)
