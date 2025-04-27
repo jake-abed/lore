@@ -300,7 +300,7 @@ func (q *Queries) GetNpcConnectedAreas(
 
 const getNpcConnectedLocationsQuery = `
 SELECT l.* FROM locations AS l
-	INNER JOIN npcs_locations AS nl ON nl.locations_id = l.id
+	INNER JOIN npcs_locations AS nl ON nl.location_id = l.id
 	WHERE nl.npc_id = $1
 `
 
