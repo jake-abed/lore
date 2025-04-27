@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"database/sql"
 )
 
 type Area struct {
@@ -123,14 +124,14 @@ func (q *Queries) GetAllAreas(ctx context.Context) ([]*Area, error) {
 	}
 
 	for rows.Next() {
-		a := Area{}
+		area := Area{}
 
-		err = rows.Scan(&a.Id, &a.Name, &a.Type, &a.Desc, &a.WorldId)
+		err := scanAreaRows(rows, &area)
 		if err != nil {
 			return nil, err
 		}
 
-		areas = append(areas, &a)
+		areas = append(areas, &area)
 	}
 
 	return areas, nil
@@ -220,4 +221,14 @@ func (q *Queries) DeleteAreaByIdQuery(ctx context.Context, id int) error {
 	}
 
 	return nil
+}
+
+func scanAreaRows(rows *sql.Rows, a *Area) error {
+	return rows.Scan(
+		&a.Id,
+		&a.Name,
+		&a.Type,
+		&a.Desc,
+		&a.WorldId,
+	)
 }

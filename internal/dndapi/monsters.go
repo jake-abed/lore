@@ -111,6 +111,9 @@ func (m *Monster) ParseAttacks() []*Attack {
 		if a.Damage == nil {
 			continue
 		}
+		if a.Name == "Multiattack" {
+			continue
+		}
 		newAttack := &Attack{
 			Name:        a.Name,
 			AttackBonus: a.AttackBonus,
@@ -127,11 +130,11 @@ func UseRandomAttack(attacks []*Attack) *AttackDamage {
 	if len(attacks) == 0 {
 		return nil
 	}
-	attackIndex := rand.IntN(len(attacks)) - 1
-	if attackIndex < 0 {
-		attackIndex = 0
-	}
+
+	// Set the attack index to a random number, but never lower than 0.
+	attackIndex := max(0, rand.IntN(len(attacks))-1)
 	attack := attacks[attackIndex]
+
 	damages := []*AttackDamage{}
 	for _, damage := range attack.Damage {
 		attackDamage := &AttackDamage{

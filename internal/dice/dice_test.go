@@ -12,6 +12,9 @@ func TestRollDamage(t *testing.T) {
 		{"", []int{0, 0}},
 		{"8d12", []int{8, 96}},
 		{"1d4-1", []int{0, 3}},
+		{"d20", []int{1, 20}},
+		{"d4+1", []int{2, 5}},
+		{"d8-1", []int{0, 7}},
 	}
 
 	for _, tt := range tests {

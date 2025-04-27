@@ -32,7 +32,7 @@ func commandDice(s *State) error {
 	}
 
 	if !strings.Contains(diceExpression, "d") {
-		return fmt.Errorf("nvalid Dice Expression: %s", diceExpression)
+		return fmt.Errorf("invalid Dice Expression: %s", diceExpression)
 	}
 
 	switch flag {

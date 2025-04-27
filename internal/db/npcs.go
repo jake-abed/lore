@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"database/sql"
 )
 
 type Npc struct {
@@ -241,24 +242,28 @@ func (q *Queries) SearchNpcsByName(
 	var npcs []*Npc
 	for rows.Next() {
 		var new Npc
-		err := rows.Scan(
-			&new.Id,
-			&new.Name,
-			&new.Race,
-			&new.Class,
-			&new.Subclass,
-			&new.Alignment,
-			&new.Level,
-			&new.Hitpoints,
-			&new.Sex,
-			&new.Description,
-			&new.Languages,
-			&new.WorldId,
-		)
+		err := scanNpcRows(rows, &new)
 		if err != nil {
 			return nil, err
 		}
 		npcs = append(npcs, &new)
 	}
 	return npcs, nil
+}
+
+func scanNpcRows(rows *sql.Rows, n *Npc) error {
+	return rows.Scan(
+		&n.Id,
+		&n.Name,
+		&n.Race,
+		&n.Class,
+		&n.Subclass,
+		&n.Alignment,
+		&n.Level,
+		&n.Hitpoints,
+		&n.Sex,
+		&n.Description,
+		&n.Languages,
+		&n.WorldId,
+	)
 }
