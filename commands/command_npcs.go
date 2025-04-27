@@ -112,6 +112,10 @@ func commandNpcs(s *State) error {
 		return nil
 	}
 
+	if len(npcArgs) == 1 && (flag == "-v" || flag == "-e" || flag == "s") {
+		return fmt.Errorf("flag %s requires an additional argument", flag)
+	}
+
 	return fmt.Errorf("no such flag as %s for npcs command", flag)
 }
 
