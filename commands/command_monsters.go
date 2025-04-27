@@ -50,14 +50,14 @@ func monstersHelp() {
 	intro := "Lore Monsters Help\n"
 	introTip := "Monsters subcommands information"
 	fmt.Println(header.Render(intro + introTip))
-	inspect := bold.Render("  *** monsters -i <monster-name> | ")
-	inspectMessage := "Inspect information about specific monster."
+	inspect := bold.Render("  *** monsters -i <monster-name> ")
+	inspectMessage := "| Inspect information about specific monster."
 	fmt.Println(inspect + inspectMessage)
-	fight := bold.Render("  *** monsters -f <monster-1> <monster-2> | ")
-	fightMessage := "Simulate a fight between monsters."
+	fight := bold.Render("  *** monsters -f <monster-1> <monster-2> ")
+	fightMessage := "| Simulate a fight between monsters."
 	fmt.Println(fight + fightMessage)
-	view := bold.Render("  *** monsters -v | ")
-	viewMessage := "View all monsters. Pipe into grep for a good time!\n"
+	view := bold.Render("  *** monsters -va ")
+	viewMessage := "| View all monsters. Pipe into grep for a good time!\n"
 	fmt.Println(view + viewMessage)
 }
 

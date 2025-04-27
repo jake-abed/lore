@@ -406,19 +406,19 @@ func questsHelp() {
 	intro := "Lore Quests Help\n"
 	introTip := "Quests subcommand information"
 	fmt.Println(header.Render(intro + introTip))
-	add := bold.Render("  *** quests -a | ")
-	addMessage := "Add a new quest."
+	add := bold.Render("  *** quests -a ")
+	addMessage := "| Add a new quest."
 	fmt.Println(add + addMessage)
-	edit := bold.Render("  *** quests -e <id> | ")
-	editMessage := "Edit a place by integer ID."
+	edit := bold.Render("  *** quests -e <id> ")
+	editMessage := "| Edit a place by integer ID."
 	fmt.Println(edit + editMessage)
-	view := bold.Render("  *** quests -v <id> | ")
-	viewMessage := "View a quest by integer ID."
+	view := bold.Render("  *** quests -v <id> ")
+	viewMessage := "| View a quest by integer ID."
 	fmt.Println(view + viewMessage)
-	delete := bold.Render("  *** quests -d <id> | ")
-	deleteMessage := "Delete a quest by ID."
+	delete := bold.Render("  *** quests -d <id> ")
+	deleteMessage := "| Delete a quest by ID."
 	fmt.Println(delete + deleteMessage)
-	search := bold.Render("  *** quests -s <name> | ")
-	searchMessage := "Searches the DB by quest name returning all results.\n"
+	search := bold.Render("  *** quests -s <name> ")
+	searchMessage := "| Searches the DB by quest name returning all results.\n"
 	fmt.Println(search + searchMessage)
 }

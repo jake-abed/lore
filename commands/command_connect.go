@@ -28,7 +28,7 @@ func commandConnect(s *State) error {
 
 	// Break out if user did not provide enough flags.
 	if len(args) != 2 {
-		fmt.Println("Places command requires exactly 2 arguments!")
+		fmt.Println("Connect command requires exactly 2 arguments!")
 		connectHelp()
 		return nil
 	}
@@ -348,6 +348,14 @@ func connectHelp() {
 	intro := "Lore Connect Help\n"
 	introTip := "Connect subcommand information"
 	fmt.Println(header.Render(intro + introTip))
+
+	npc := bold.Render("  *** connect --npc=<id> --{quest|place-type}=<id> ")
+	npcMessage := "| Connect an NPC to a quest or place by IDs."
+	fmt.Println(npc + npcMessage)
+
+	quest := bold.Render("  *** connect --quest=<id> --{npc|place-type}=<id> ")
+	questMessage := "| Connect a quest to an NPC or place by IDs."
+	fmt.Println(quest + questMessage)
 }
 
 func printNameAndId(name string, id, i, length int) {

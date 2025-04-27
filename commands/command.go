@@ -26,7 +26,7 @@ func BuildCommands() map[string]Command {
 		},
 		"dice": {
 			Name:        "dice",
-			Description: "Roll dice in the following format: {qtyDice}d{Die}{+/-}{modifier}.",
+			Description: "Roll dice in the following format: {qty}d{Die}{+/-}{modifier}.",
 			Callback:    commandDice,
 		},
 		"monsters": {

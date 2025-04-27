@@ -12,7 +12,9 @@ func commandDice(s *State) error {
 	diceArgs := s.Args[1:]
 
 	if len(diceArgs) == 0 {
-		return fmt.Errorf("the dice command requires at least one argument")
+		fmt.Println(ErrorMsg.Render("the dice command requires at least one argument"))
+		diceHelp()
+		return nil
 	}
 
 	if len(diceArgs) == 1 && diceArgs[0] == "help" {
@@ -71,13 +73,13 @@ func diceHelp() {
 	intro := "Lore Dice Help\n"
 	introTip := "Dice subcommands information"
 	fmt.Println(header.Render(intro + introTip))
-	all := bold.Render("  *** dice -a <monster-1> <monster-2> | ")
-	allMessage := "Roll all the dice of an expression together returning the result."
+	all := bold.Render("  *** dice -a <monster-1> <monster-2> ")
+	allMessage := "| Roll all the dice of an expression together returning the result."
 	fmt.Println(all + allMessage)
-	individual := bold.Render("  *** dice -i <dice-expression> | ")
-	individualMessage := "Roll each die of an expression one at a time."
+	individual := bold.Render("  *** dice -i <dice-expression> ")
+	individualMessage := "| Roll each die of an expression one at a time."
 	fmt.Println(individual + individualMessage)
-	example := bold.Render("  *** Examples | ")
-	exampleMessage := "d20, 1d6, 2d12+1, 1d4-1, 3d6+8, 5d20+12, 80d100-50, etc.\n"
+	example := bold.Render("  *** Examples ")
+	exampleMessage := "| d20, 1d6, 2d12+1, 1d4-1, 3d6+8, 5d20+12, 80d100-50, etc.\n"
 	fmt.Println(example + exampleMessage)
 }

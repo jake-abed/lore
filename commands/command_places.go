@@ -654,24 +654,24 @@ func placesHelp() {
 	introTip := "Places subcommand information"
 	fmt.Println(header.Render(intro + introTip))
 	placeFlagIntro := bold.Render("Place Flags: ")
-	placeFlags := "--world, --area, --location, --sublocation"
+	placeFlags := "--world, --area, --location"
 	fmt.Println(placeFlagIntro + placeFlags)
-	add := bold.Render("  *** places <place flag> -a | ")
-	addMessage := "Add a new place. Must specifiy place flag."
+	add := bold.Render("  *** places <place flag> -a ")
+	addMessage := "| Add a new place. Must specifiy place flag."
 	fmt.Println(add + addMessage)
-	edit := bold.Render("  *** places <place flag> -e <name> | ")
-	editMessage := "Edit a place by name. Must specify place flag."
+	edit := bold.Render("  *** places <place flag> -e <name> ")
+	editMessage := "| Edit a place by name. Must specify place flag."
 	fmt.Println(edit + editMessage)
-	view := bold.Render("  *** places <place flag> -v <name> | ")
-	viewMessage := "View a place by name (case-insensitive)."
+	view := bold.Render("  *** places <place flag> -v <name> ")
+	viewMessage := "| View a place by name (case-insensitive)."
 	fmt.Println(view + viewMessage)
-	viewAll := bold.Render("  *** places <place-flag> -va | ")
-	viewAllMsg := "View all places by place-flag. Great for piping."
+	viewAll := bold.Render("  *** places <place-flag> -va ")
+	viewAllMsg := "| View all places by place-flag. Great for piping."
 	fmt.Println(viewAll + viewAllMsg)
-	delete := bold.Render("  *** places <place flag> -d <id> | ")
-	deleteMessage := "Delete a place by ID."
+	delete := bold.Render("  *** places <place flag> -d <id> ")
+	deleteMessage := "| Delete a place by ID."
 	fmt.Println(delete + deleteMessage)
-	search := bold.Render("  *** places -s <place flag> <name> | ")
-	searchMessage := "Searches the DB by place name returning all results.\n"
+	search := bold.Render("  *** places -s <place flag> <name> ")
+	searchMessage := "| Searches the DB by place name returning all results.\n"
 	fmt.Println(search + searchMessage)
 }

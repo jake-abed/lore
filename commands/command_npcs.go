@@ -119,20 +119,20 @@ func npcHelp() {
 	intro := "Lore Npc Help\n"
 	introTip := "NPCs subcommand information"
 	fmt.Println(header.Render(intro + introTip))
-	add := bold.Render("  *** npcs -a | ")
-	addMessage := "Add a new npc by name."
+	add := bold.Render("  *** npcs -a ")
+	addMessage := "| Add a new npc by name."
 	fmt.Println(add + addMessage)
-	edit := bold.Render("  *** npcs -e <npc-name> | ")
-	editMessage := "Edit an NPC by name."
+	edit := bold.Render("  *** npcs -e <npc-name> ")
+	editMessage := "| Edit an NPC by name."
 	fmt.Println(edit + editMessage)
-	delete := bold.Render("  *** npcs -d <npc-id> | ")
-	deleteMsg := "Delete an NPC by ID."
+	delete := bold.Render("  *** npcs -d <npc-id> ")
+	deleteMsg := "| Delete an NPC by ID."
 	fmt.Println(delete + deleteMsg)
-	search := bold.Render("  *** npcs -s <npc-name> | ")
-	searchMessage := "Searches the DB by NPC name returning all results."
+	search := bold.Render("  *** npcs -s <npc-name> ")
+	searchMessage := "| Searches the DB by NPC name returning all results."
 	fmt.Println(search + searchMessage)
-	view := bold.Render("  *** npcs -v <npc-name> | ")
-	viewMessage := "View an NPC by name (case-insensitive).\n"
+	view := bold.Render("  *** npcs -v <npc-name> ")
+	viewMessage := "| View an NPC by name (case-insensitive).\n"
 	fmt.Println(view + viewMessage)
 }
 

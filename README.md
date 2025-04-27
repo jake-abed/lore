@@ -97,6 +97,15 @@ View, search, edit, and create custom places for your campaign.
 - --location | Locations contained within areas.
 - --sublocation | Not implemented! Not sure if necessary or overkill?
 
+### **connect**
+
+Connect NPCs to quests/places and Quests to npcs/places.
+
+-- **--npc=<id> --{quest|place-type}=<id>** | Connect an npc to a quest/place.
+-- **--quest=<id> --{npc|place-type}=<id>** | Connect a quest to an npc/place.
+
+These connections will become visible
+
 ## Roadmap
 
 While not set in stone, hitting a true v1.0.0 will include:
@@ -104,10 +113,10 @@ While not set in stone, hitting a true v1.0.0 will include:
 - [x] ~~Dice Rolls~~
 - - ~~`lore dice <dice-arg>` allowing for dynamic dice rolls!~~
 - - - ~~For example `lore dice 2d6+1` rolls two six-sided die and adds one!~~
-- [ ] Quests
+- [x] ~~Quests~~
 - - [x] ~~Write quests.~~
-- - [ ] Attach NPCs to quests
-- - [ ] Attach places to quests?
+- - [x] ~~Attach NPCs to quests~~
+- - [x] ~~Attach places to quests?~~
 - [ ] History/Events
 - - The final shape isn't decided, but historical events can be important.
 - [ ] Players
