@@ -224,16 +224,11 @@ func (q *Queries) DeleteAreaByIdQuery(ctx context.Context, id int) error {
 }
 
 func scanAreaRows(rows *sql.Rows, a *Area) error {
-	err := rows.Scan(
+	return rows.Scan(
 		&a.Id,
 		&a.Name,
 		&a.Type,
 		&a.Desc,
 		&a.WorldId,
 	)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }

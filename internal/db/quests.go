@@ -225,7 +225,7 @@ func (q *Queries) DeleteQuestById(ctx context.Context, id int) error {
 // Scan Helpers
 
 func scanQuest(row *sql.Row, q *Quest) error {
-	err := row.Scan(
+	return row.Scan(
 		&q.Id,
 		&q.Name,
 		&q.Desc,
@@ -236,15 +236,10 @@ func scanQuest(row *sql.Row, q *Quest) error {
 		&q.IsFinished,
 		&q.WorldId,
 	)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func scanQuestRows(rows *sql.Rows, q *Quest) error {
-	err := rows.Scan(
+	return rows.Scan(
 		&q.Id,
 		&q.Name,
 		&q.Desc,
@@ -255,9 +250,4 @@ func scanQuestRows(rows *sql.Rows, q *Quest) error {
 		&q.IsFinished,
 		&q.WorldId,
 	)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }

@@ -349,3 +349,13 @@ func connectHelp() {
 	introTip := "Connect subcommand information"
 	fmt.Println(header.Render(intro + introTip))
 }
+
+func printNameAndId(name string, id, i, length int) {
+	fmt.Printf("%s (ID: %d)", name, id)
+
+	if i < length-1 {
+		fmt.Printf(", ")
+	} else {
+		fmt.Printf("\n")
+	}
+}

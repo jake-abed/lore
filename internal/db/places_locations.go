@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"database/sql"
 )
 
 type Location struct {
@@ -211,4 +212,14 @@ func (q *Queries) DeleteLocationByIdQuery(ctx context.Context, id int) error {
 	}
 
 	return nil
+}
+
+func scanLocationRows(rows *sql.Rows, l *Location) error {
+	return rows.Scan(
+		&l.Id,
+		&l.Name,
+		&l.Type,
+		&l.Desc,
+		&l.AreaId,
+	)
 }

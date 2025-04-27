@@ -56,7 +56,7 @@ func (q *Queries) CreateNpcQuestConnection(
 ) (*NpcQuest, error) {
 	npcQuest := NpcQuest{}
 	row := q.Db.QueryRowContext(
-		context.Background(),
+		ctx,
 		createNpcQuestConnectionQuery,
 		params.FirstId,
 		params.SecondId,
@@ -82,7 +82,7 @@ func (q *Queries) CreateNpcWorldConnection(
 ) (*NpcWorld, error) {
 	npcWorld := NpcWorld{}
 	row := q.Db.QueryRowContext(
-		context.Background(),
+		ctx,
 		createNpcWorldConnectionQuery,
 		params.FirstId,
 		params.SecondId,
@@ -108,7 +108,7 @@ func (q *Queries) CreateNpcAreaConnection(
 ) (*NpcArea, error) {
 	npcArea := NpcArea{}
 	row := q.Db.QueryRowContext(
-		context.Background(),
+		ctx,
 		createNpcAreaConnectionQuery,
 		params.FirstId,
 		params.SecondId,
@@ -134,7 +134,7 @@ func (q *Queries) CreateNpcLocationConnection(
 ) (*NpcLocation, error) {
 	npcLocation := NpcLocation{}
 	row := q.Db.QueryRowContext(
-		context.Background(),
+		ctx,
 		createNpcLocationConnectionQuery,
 		params.FirstId,
 		params.SecondId,
@@ -160,7 +160,7 @@ func (q *Queries) CreateQuestWorldConnection(
 ) (*QuestWorld, error) {
 	questWorld := QuestWorld{}
 	row := q.Db.QueryRowContext(
-		context.Background(),
+		ctx,
 		createQuestWorldConnectionQuery,
 		params.FirstId,
 		params.SecondId,
@@ -186,7 +186,7 @@ func (q *Queries) CreateQuestAreaConnection(
 ) (*QuestArea, error) {
 	questArea := QuestArea{}
 	row := q.Db.QueryRowContext(
-		context.Background(),
+		ctx,
 		createQuestAreaConnectionQuery,
 		params.FirstId,
 		params.SecondId,
@@ -212,7 +212,7 @@ func (q *Queries) CreateQuestLocationConnection(
 ) (*QuestLocation, error) {
 	questLocation := QuestLocation{}
 	row := q.Db.QueryRowContext(
-		context.Background(),
+		ctx,
 		createQuestLocationConnectionQuery,
 		params.FirstId,
 		params.SecondId,
@@ -239,7 +239,7 @@ func (q *Queries) GetNpcConnectedQuests(
 	npcId int,
 ) ([]*Quest, error) {
 	rows, err := q.Db.QueryContext(
-		context.Background(),
+		ctx,
 		getNpcConnectedQuestsQuery,
 		npcId,
 	)
@@ -274,7 +274,7 @@ func (q *Queries) GetNpcConnectedAreas(
 	npcId int,
 ) ([]*Area, error) {
 	rows, err := q.Db.QueryContext(
-		context.Background(),
+		ctx,
 		getNpcConnectedAreasQuery,
 		npcId,
 	)
@@ -298,6 +298,41 @@ func (q *Queries) GetNpcConnectedAreas(
 	return areas, nil
 }
 
+const getNpcConnectedLocationsQuery = `
+SELECT l.* FROM locations AS l
+	INNER JOIN npcs_locations AS nl ON nl.locations_id = l.id
+	WHERE nl.npc_id = $1
+`
+
+func (q *Queries) GetNpcConnectedLocations(
+	ctx context.Context,
+	npcId int,
+) ([]*Location, error) {
+	rows, err := q.Db.QueryContext(
+		ctx,
+		getNpcConnectedLocationsQuery,
+		npcId,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	locations := []*Location{}
+
+	for rows.Next() {
+		location := Location{}
+
+		err := scanLocationRows(rows, &location)
+		if err != nil {
+			return nil, err
+		}
+
+		locations = append(locations, &location)
+	}
+
+	return locations, nil
+}
+
 const getQuestConnectedNpcsQuery = `
 SELECT n.* FROM npcs AS n
 	INNER JOIN npcs_quests AS nq ON nq.npc_id = n.id
@@ -309,7 +344,7 @@ func (q *Queries) GetQuestConnectedNpcs(
 	questId int,
 ) ([]*Npc, error) {
 	rows, err := q.Db.QueryContext(
-		context.Background(),
+		ctx,
 		getQuestConnectedNpcsQuery,
 		questId,
 	)
@@ -335,7 +370,7 @@ func (q *Queries) GetQuestConnectedNpcs(
 
 const getQuestConnectedAreasQuery = `
 SELECT a.* FROM areas AS a
-	INNER JOIN quests_areas AS qa ON qa.area_id = w.id
+	INNER JOIN quests_areas AS qa ON qa.area_id = a.id
 	WHERE qa.quest_id = $1
 `
 
@@ -344,7 +379,7 @@ func (q *Queries) GetQuestConnectedAreas(
 	questId int,
 ) ([]*Area, error) {
 	rows, err := q.Db.QueryContext(
-		context.Background(),
+		ctx,
 		getQuestConnectedAreasQuery,
 		questId,
 	)
@@ -366,4 +401,39 @@ func (q *Queries) GetQuestConnectedAreas(
 	}
 
 	return areas, nil
+}
+
+const getQuestConnectedLocationsQuery = `
+SELECT l.* FROM locations AS l
+	INNER JOIN quests_locations AS ql ON ql.location_id = l.id
+	WHERE ql.quest_id = $1
+`
+
+func (q *Queries) GetQuestConnectedLocations(
+	ctx context.Context,
+	questId int,
+) ([]*Location, error) {
+	rows, err := q.Db.QueryContext(
+		ctx,
+		getQuestConnectedLocationsQuery,
+		questId,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	locations := []*Location{}
+
+	for rows.Next() {
+		location := Location{}
+
+		err := scanLocationRows(rows, &location)
+		if err != nil {
+			return nil, err
+		}
+
+		locations = append(locations, &location)
+	}
+
+	return locations, nil
 }
